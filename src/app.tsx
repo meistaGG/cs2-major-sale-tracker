@@ -78,7 +78,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   {
     id: "RMR-2020",
     major: "Regional Major Rankings 2020",
-    city: null,
+    city: "N/A",
     year: 2020,
     introduced: "2021-01-27",
     saleDate: "2021-04-06",
@@ -356,7 +356,7 @@ export default function CS2CapsuleTracker() {
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="🔍 Search a Major or city"
+                  placeholder="Search a Major or city"
                   className="max-w-sm"
                 />
               </div>
