@@ -25,7 +25,7 @@ export type CapsuleRow = {
   introduced: string | null;
   saleDate: string | null; // "Sale" wording only in UI
   removed: string | null;
-  winner?: string | null; // e.g. "🏆 Vitality"
+  winner?: string | null; // e.g. "🏆 Team Vitality"
 };
 
 const INITIAL_ROWS: CapsuleRow[] = [
@@ -219,7 +219,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2023-05-04",
     saleDate: "2023-06-23",
     removed: "2023-10-07",
-    winner: "🏆 Vitality",
+    winner: "🏆 Team Vitality",
   },
   // === CS2 era ===
   {
@@ -240,7 +240,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2024-11-27",
     saleDate: "2025-01-14",
     removed: "2025-04-21",
-    winner: "🏆 Spirit",
+    winner: "🏆 Team Spirit",
   },
   {
     id: "austin-2025",
@@ -250,7 +250,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2025-05-22",
     saleDate: "2025-08-14",
     removed: null,
-    winner: "🏆 Vitality",
+    winner: "🏆 Team Vitality",
   },
   {
     id: "budapest-2025",
@@ -412,42 +412,48 @@ export default function CS2CapsuleTracker() {
     }));
 
   // Graph data (use full set so averages are consistent)
+  // Graph data (use filtered set so it follows the table)
   const chartData = useMemo(
     () =>
-      INITIAL_ROWS.map((r) => ({
+      filtered.map((r) => ({
         major: r.major,
         availability: availabilityDays(r) ?? 0,
         saleDuration: diffDays(r.saleDate, r.removed) ?? 0,
       })),
-    []
+    [filtered]
   );
 
   const isNum = (v: number | null): v is number => v !== null;
 
   const avgSale = useMemo(() => {
-    const vals = INITIAL_ROWS.map((r) =>
-      diffDays(r.saleDate, r.removed)
-    ).filter(isNum);
+    const vals = filtered
+      .map((r) => diffDays(r.saleDate, r.removed))
+      .filter((v): v is number => v !== null);
     return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-  }, []);
+  }, [filtered]);
 
   const avgAvail = useMemo(() => {
-    const vals = INITIAL_ROWS.map((r) => availabilityDays(r)).filter(isNum);
+    const vals = filtered
+      .map((r) => availabilityDays(r))
+      .filter((v): v is number => v !== null);
     return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-  }, []);
+  }, [filtered]);
 
   // --- Averages for the last 5 majors (by Introduced date, most recent first) ---
   const { avgAvail5, avgSale5 } = useMemo(() => {
     const parse = (d: string | null) =>
       d ? new Date(d + "T00:00:00").getTime() : 0;
-    const recent = INITIAL_ROWS.filter((r) => !!r.introduced)
+    const recent = filtered
+      .filter((r) => !!r.introduced)
       .sort((a, b) => parse(b.introduced) - parse(a.introduced))
       .slice(0, 5);
 
-    const availVals = recent.map((r) => availabilityDays(r)).filter(isNum);
+    const availVals = recent
+      .map((r) => availabilityDays(r))
+      .filter((v): v is number => v !== null);
     const saleVals = recent
       .map((r) => diffDays(r.saleDate, r.removed))
-      .filter(isNum);
+      .filter((v): v is number => v !== null);
 
     const avgAvail5 = availVals.length
       ? availVals.reduce((a, b) => a + b, 0) / availVals.length
@@ -457,7 +463,7 @@ export default function CS2CapsuleTracker() {
       : 0;
 
     return { avgAvail5, avgSale5 };
-  }, []);
+  }, [filtered]);
 
   // --- Lightweight tests (console) ------------------------------------------
   useEffect(() => {
