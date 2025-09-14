@@ -513,7 +513,8 @@ export default function CS2CapsuleTracker() {
             📊 Duration Overview
           </h2>
           <div className="overflow-x-auto">
-            <div style={{ width: 1000 }}>
+            {/* On mobile: enforce min-width for swipe; on large screens: remove the cap so it can fill */}
+            <div className="w-full min-w-[900px] lg:min-w-0">
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
                   data={chartData}
