@@ -203,26 +203,20 @@ const statusFor = (row: CapsuleRow) => {
   return { label: "Planned", tone: "bg-blue-100 text-blue-900" };
 };
 
-// Renders a right-side, multi-line label for ReferenceLine
+// (Optional) label component retained if you want to switch back to inline labels later
 const RightMultiLineLabel: React.FC<{
   viewBox?: { x: number; y: number; width: number; height: number };
   lines: string[];
   color?: string;
-  /** vertical offset in px to stack labels */
   dy?: number;
-  /** render inside the plot area (prevents clipping) */
   inside?: boolean;
 }> = ({ viewBox, lines, color = "#111827", dy = 0, inside = true }) => {
   if (!viewBox) return null as any;
-
-  // If inside: draw on the RIGHT EDGE inside the plotting area (avoids clip).
-  // If outside: draw just to the right (will be clipped unless margin is huge).
   const padding = 8;
   const x = inside
-    ? viewBox.x + viewBox.width - padding // inside-right
-    : viewBox.x + viewBox.width + padding; // outside-right (gets clipped)
+    ? viewBox.x + viewBox.width - padding
+    : viewBox.x + viewBox.width + padding;
   const y = viewBox.y + dy;
-
   return (
     <text
       x={x}
@@ -326,20 +320,16 @@ export default function CS2CapsuleTracker() {
   const last5Averages = useMemo(() => {
     const parse = (d: string | null) =>
       d ? new Date(d + "T00:00:00").getTime() : 0;
-
     const recent = INITIAL_ROWS.filter((r) => !!r.introduced)
       .sort((a, b) => parse(b.introduced) - parse(a.introduced))
       .slice(0, 5);
-
     const points = recent.map((r) => ({
       availability: availabilityDays(r) ?? 0,
       saleDuration: diffDays(r.saleDate, r.removed) ?? 0,
     }));
-
     const denom = points.length || 1;
     const avgAvail5 = points.reduce((s, p) => s + p.availability, 0) / denom;
     const avgSale5 = points.reduce((s, p) => s + p.saleDuration, 0) / denom;
-
     return { avgAvail5, avgSale5 };
   }, []);
   const { avgAvail5, avgSale5 } = last5Averages;
@@ -369,6 +359,7 @@ export default function CS2CapsuleTracker() {
     }
   }, []);
 
+  // --- Local Chart component (kept top-level in file scope of App) -----------
   function ChartSection({
     chartData,
     avgAvail,
@@ -391,7 +382,6 @@ export default function CS2CapsuleTracker() {
         <h2 className="text-2xl font-bold text-stone-800 mb-4">
           📊 Duration Overview
         </h2>
-
         <div className="relative">
           {/* Overlay with the 4 averages (never clipped, never overlaps) */}
           <div className="absolute right-2 top-2 z-10 text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
@@ -399,21 +389,18 @@ export default function CS2CapsuleTracker() {
             <div style={{ color: "#10b981" }}>
               avail: {avgAvail.toFixed(0)} days
             </div>
-
             <div style={{ color: "#6366f1", fontWeight: 700, marginTop: 4 }}>
               Average
             </div>
             <div style={{ color: "#6366f1" }}>
               sale: {avgSale.toFixed(0)} days
             </div>
-
             <div style={{ color: "#0ea5e9", fontWeight: 700, marginTop: 4 }}>
               Avg (last 5 Majors)
             </div>
             <div style={{ color: "#0ea5e9" }}>
               avail: {avgAvail5.toFixed(0)} days
             </div>
-
             <div style={{ color: "#7c3aed", fontWeight: 700, marginTop: 4 }}>
               Avg (last 5 Majors)
             </div>
@@ -423,7 +410,6 @@ export default function CS2CapsuleTracker() {
           </div>
 
           <div className="overflow-x-auto">
-            {/* On mobile: enforce min width for swipe; on large screens: expand fully */}
             <div className="w-full min-w-[900px] lg:min-w-0">
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
@@ -450,8 +436,6 @@ export default function CS2CapsuleTracker() {
                     height={32}
                     wrapperStyle={{ paddingBottom: 8 }}
                   />
-
-                  {/* Bars */}
                   <Bar
                     dataKey="availability"
                     name="Intro → Removal"
@@ -464,8 +448,6 @@ export default function CS2CapsuleTracker() {
                     fill="#6366f1"
                     radius={[6, 6, 0, 0]}
                   />
-
-                  {/* Reference lines WITHOUT labels (no clipping) */}
                   <ReferenceLine
                     ifOverflow="extendDomain"
                     y={avgAvail}
@@ -498,4 +480,75 @@ export default function CS2CapsuleTracker() {
       </div>
     );
   }
+
+  // ✅ RETURN UI (previous white screen was because we weren't returning anything)
+  return (
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-10 text-stone-900">
+      <div className="mx-auto max-w-screen-2xl">
+        <motion.h1
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl font-extrabold tracking-tight text-stone-800"
+        >
+          🎯 CS Major Capsule Chronicle
+        </motion.h1>
+        <p className="mt-3 text-stone-600 max-w-3xl text-lg">
+          Follow each Major’s{" "}
+          <span className="font-semibold">sticker capsule</span>: when it
+          arrived, when the sale began, and when it was removed.
+        </p>
+
+        {/* Simple search/filter header preserved */}
+        <Card className="mt-6 border-stone-200 shadow-sm">
+          <CardContent className="p-4 md:p-6">
+            <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+              <div className="flex flex-1 items-center gap-2">
+                <Search className="w-4 h-4 text-stone-500" />
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="🔍 Search a Major or city…"
+                  className="max-w-sm"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-stone-500" />
+                <select
+                  value={yearFilter}
+                  onChange={(e) => setYearFilter(e.target.value)}
+                  className="border rounded-xl px-3 py-2 bg-white shadow-sm"
+                >
+                  <option value="">All years</option>
+                  {years.map((y) => (
+                    <option key={y} value={String(y)}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setQuery("");
+                    setYearFilter("");
+                  }}
+                  className="rounded-2xl"
+                >
+                  Reset
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Chart section */}
+        <ChartSection
+          chartData={chartData}
+          avgAvail={avgAvail}
+          avgSale={avgSale}
+          avgAvail5={avgAvail5}
+          avgSale5={avgSale5}
+        />
+      </div>
+    </div>
+  );
 }
