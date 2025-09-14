@@ -304,6 +304,28 @@ export default function CS2CapsuleTracker() {
     [chartData]
   );
 
+  // --- Averages for the last 5 majors (by Introduced date, most recent first) ---
+  const last5Averages = useMemo(() => {
+    const parse = (d: string | null) =>
+      d ? new Date(d + "T00:00:00").getTime() : 0;
+
+    const recent = INITIAL_ROWS.filter((r) => !!r.introduced)
+      .sort((a, b) => parse(b.introduced) - parse(a.introduced))
+      .slice(0, 5);
+
+    const points = recent.map((r) => ({
+      availability: availabilityDays(r) ?? 0,
+      saleDuration: diffDays(r.saleDate, r.removed) ?? 0,
+    }));
+
+    const denom = points.length || 1;
+    const avgAvail5 = points.reduce((s, p) => s + p.availability, 0) / denom;
+    const avgSale5 = points.reduce((s, p) => s + p.saleDuration, 0) / denom;
+
+    return { avgAvail5, avgSale5 };
+  }, []);
+  const { avgAvail5, avgSale5 } = last5Averages;
+
   // --- Lightweight tests (console) ------------------------------------------
   useEffect(() => {
     const t = (name: string, ok: boolean) =>
@@ -518,7 +540,7 @@ export default function CS2CapsuleTracker() {
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
                   data={chartData}
-                  margin={{ top: 50, right: 200, left: 0, bottom: 20 }} // more space on the right for labels
+                  margin={{ top: 50, right: 180, left: 0, bottom: 20 }} // more space on the right for labels
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
@@ -583,6 +605,38 @@ export default function CS2CapsuleTracker() {
                       <RightMultiLineLabel
                         lines={["Average", `sale: ${avgSale.toFixed(0)} days`]}
                         color="#111827"
+                      />
+                    }
+                  />
+                  {/* Last 5 majors averages (same multi-line label formatting) */}
+                  <ReferenceLine
+                    ifOverflow="extendDomain"
+                    y={avgAvail5}
+                    stroke="#0ea5e9"
+                    strokeDasharray="3 3"
+                    label={
+                      <RightMultiLineLabel
+                        lines={[
+                          "Avg (last 5)",
+                          `avail: ${avgAvail5.toFixed(0)} days`,
+                        ]}
+                        color="#0ea5e9"
+                      />
+                    }
+                  />
+
+                  <ReferenceLine
+                    ifOverflow="extendDomain"
+                    y={avgSale5}
+                    stroke="#7c3aed"
+                    strokeDasharray="3 3"
+                    label={
+                      <RightMultiLineLabel
+                        lines={[
+                          "Avg (last 5)",
+                          `sale: ${avgSale5.toFixed(0)} days`,
+                        ]}
+                        color="#7c3aed"
                       />
                     }
                   />
