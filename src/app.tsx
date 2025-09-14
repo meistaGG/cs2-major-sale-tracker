@@ -413,15 +413,18 @@ export default function CS2CapsuleTracker() {
 
   // Graph data (use full set so averages are consistent)
   // Graph data (use filtered set so it follows the table)
-  const chartData = useMemo(
-    () =>
-      filtered.map((r) => ({
+  const chartData = useMemo(() => {
+    const parse = (d: string | null) =>
+      d ? new Date(d + "T00:00:00").getTime() : 0;
+
+    return [...filtered]
+      .sort((a, b) => parse(a.introduced) - parse(b.introduced)) // always ascending
+      .map((r) => ({
         major: r.major,
         availability: availabilityDays(r) ?? 0,
         saleDuration: diffDays(r.saleDate, r.removed) ?? 0,
-      })),
-    [filtered]
-  );
+      }));
+  }, [filtered]);
 
   const isNum = (v: number | null): v is number => v !== null;
 
