@@ -37,8 +37,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     city: "Boston",
     year: 2018,
     introduced: "2018-01-10",
-    saleDate: "2018-02-08",
-    removed: "2018-04-09",
+    saleDate: "2018-01-26",
+    removed: "2018-01-30",
     winner: "🏆 Cloud9",
     logo: "/logos/boston-2018.png",
   },
@@ -48,8 +48,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     city: "London",
     year: 2018,
     introduced: "2018-09-05",
-    saleDate: "2018-10-02",
-    removed: "2018-12-03",
+    saleDate: "2018-09-22",
+    removed: "2018-09-26",
     winner: "🏆 Astralis",
     logo: "/logos/london-2018.png",
   },
@@ -59,8 +59,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     city: "Katowice",
     year: 2019,
     introduced: "2019-02-06",
-    saleDate: "2019-03-12",
-    removed: "2019-05-06",
+    saleDate: "2019-03-02",
+    removed: "2019-03-11",
     winner: "🏆 Astralis",
     logo: "/logos/katowice-2019.png",
   },
@@ -70,8 +70,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     city: "Berlin",
     year: 2019,
     introduced: "2019-08-14",
-    saleDate: "2019-09-05",
-    removed: "2019-12-09",
+    saleDate: "2019-09-07",
+    removed: "2019-09-26",
     winner: "🏆 Astralis",
     logo: "/logos/berlin-2019.png",
   },
@@ -126,7 +126,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     city: "Paris",
     year: 2023,
     introduced: "2023-05-04",
-    saleDate: "2023-06-22",
+    saleDate: "2023-06-23",
     removed: "2023-10-07",
     winner: "🏆 Vitality",
     logo: "/logos/paris-2023.png",
@@ -530,7 +530,13 @@ export default function CS2CapsuleTracker() {
                     height={60} // more room for long names
                   />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value: any, name: string) => {
+                      // name is e.g. "Intro → Removal" or "Sale → Removal"
+                      return [value, name]; // Recharts will render as "Intro → Removal: 114" (no extra space)
+                    }}
+                    labelFormatter={(label) => `${label}`} // keep major name as-is
+                  />
                   <Legend
                     verticalAlign="top"
                     align="left"
@@ -560,7 +566,10 @@ export default function CS2CapsuleTracker() {
                     strokeDasharray="5 5"
                     label={
                       <RightMultiLineLabel
-                        lines={["Average", `avail: ${avgAvail.toFixed(0)}d`]}
+                        lines={[
+                          "Average",
+                          `avail: ${avgAvail.toFixed(0)} days`,
+                        ]}
                         color="#111827"
                       />
                     }
@@ -572,7 +581,7 @@ export default function CS2CapsuleTracker() {
                     strokeDasharray="5 5"
                     label={
                       <RightMultiLineLabel
-                        lines={["Average", `sale: ${avgSale.toFixed(0)}d`]}
+                        lines={["Average", `sale: ${avgSale.toFixed(0)} days`]}
                         color="#111827"
                       />
                     }
