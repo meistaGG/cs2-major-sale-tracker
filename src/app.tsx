@@ -208,14 +208,23 @@ const RightMultiLineLabel: React.FC<{
   viewBox?: { x: number; y: number; width: number; height: number };
   lines: string[];
   color?: string;
-  /** extra vertical offset in pixels */
+  /** vertical offset in px to stack labels */
   dy?: number;
-}> = ({ viewBox, lines, color = "#111827", dy = 0 }) => {
+  /** render inside the plot area (prevents clipping) */
+  inside?: boolean;
+}> = ({ viewBox, lines, color = "#111827", dy = 0, inside = true }) => {
   if (!viewBox) return null as any;
-  const x = viewBox.x + viewBox.width + 8; // right of plot
-  const y = viewBox.y + dy; // nudge vertically
+
+  // If inside: draw on the RIGHT EDGE inside the plotting area (avoids clip).
+  // If outside: draw just to the right (will be clipped unless margin is huge).
+  const padding = 8;
+  const x = inside
+    ? viewBox.x + viewBox.width - padding           // inside-right
+    : viewBox.x + viewBox.width + padding;          // outside-right (gets clipped)
+  const y = viewBox.y + dy;
+
   return (
-    <text x={x} y={y} fill={color} fontSize={12} fontWeight={700}>
+    <text x={x} y={y} fill={color} fontSize={12} fontWeight={700} textAnchor={inside ? "end" : "start"}>
       {lines.map((line, i) => (
         <tspan key={i} x={x} dy={i === 0 ? 0 : 14}>
           {line}
@@ -595,7 +604,7 @@ export default function CS2CapsuleTracker() {
                           `avail: ${avgAvail.toFixed(0)} days`,
                         ]}
                         color="#111827"
-                        dy={-36}
+                        dy={-24}
                       />
                     }
                   />
@@ -608,7 +617,7 @@ export default function CS2CapsuleTracker() {
                       <RightMultiLineLabel
                         lines={["Average", `sale: ${avgSale.toFixed(0)} days`]}
                         color="#111827"
-                        dy={-6}
+                        dy={0}
                       />
                     }
                   />
@@ -625,7 +634,7 @@ export default function CS2CapsuleTracker() {
                           `avail: ${avgAvail5.toFixed(0)} days`,
                         ]}
                         color="#0ea5e9"
-                        dy={+24}
+                        dy={24}
                       />
                     }
                   />
@@ -642,7 +651,7 @@ export default function CS2CapsuleTracker() {
                           `sale: ${avgSale5.toFixed(0)} days`,
                         ]}
                         color="#7c3aed"
-                        dy={+54}
+                        dy={48}
                       />
                     }
                   />
