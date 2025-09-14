@@ -359,7 +359,7 @@ export default function CS2CapsuleTracker() {
           <tr>
             <th className="text-left py-3 pl-4 pr-4">Major / City</th>
             <th
-              className="py-3 pr-4 cursor-pointer"
+              className="py-3 pl-4 pr-4 cursor-pointer"
               onClick={() => onSort("introduced")}
             >
               <div className="inline-flex items-center gap-1">
@@ -367,7 +367,7 @@ export default function CS2CapsuleTracker() {
               </div>
             </th>
             <th
-              className="py-3 pr-4 cursor-pointer"
+              className="py-3 pl-4 pr-4 cursor-pointer"
               onClick={() => onSort("saleDate")}
             >
               <div className="inline-flex items-center gap-1">
@@ -375,17 +375,17 @@ export default function CS2CapsuleTracker() {
               </div>
             </th>
             <th
-              className="py-3 pr-4 cursor-pointer"
+              className="py-3 pl-4 pr-4 cursor-pointer"
               onClick={() => onSort("removed")}
             >
               <div className="inline-flex items-center gap-1">
                 Removed <ArrowUpDown className="w-3 h-3" />
               </div>
             </th>
-            <th className="py-3 pr-4">Availability (intro → removal)</th>
-            <th className="py-3 pr-4">Duration (sale → removal)</th>
-            <th className="py-3 pr-4">Champion</th>
-            <th className="py-3 pr-4">Status</th>
+            <th className="py-3 pl-4 pr-4">Availability (intro → removal)</th>
+            <th className="py-3 pl-4 pr-4">Duration (sale → removal)</th>
+            <th className="py-3 pl-4 pr-4">Champion</th>
+            <th className="py-3 pl-4 pr-4">Status</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-stone-100">
