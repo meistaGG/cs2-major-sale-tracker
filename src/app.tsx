@@ -4,7 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, CalendarDays, Search, Filter, Info } from "lucide-react";
 import { motion } from "framer-motion";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Legend } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ReferenceLine,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 // --- Data model --------------------------------------------------------------
 export type CapsuleRow = {
@@ -16,7 +26,7 @@ export type CapsuleRow = {
   saleDate: string | null; // "Sale" wording only in UI
   removed: string | null;
   winner?: string | null; // e.g. "🏆 Vitality"
-  logo?: string | null;   // optional tournament logo url (24px-ish)
+  logo?: string | null; // optional tournament logo url (24px-ish)
 };
 
 const INITIAL_ROWS: CapsuleRow[] = [
@@ -158,7 +168,9 @@ const fmt = (iso: string | null) =>
 
 const diffDays = (a: string | null, b: string | null) => {
   if (!a || !b) return null;
-  const ms = Math.abs(new Date(b + "T00:00:00").getTime() - new Date(a + "T00:00:00").getTime());
+  const ms = Math.abs(
+    new Date(b + "T00:00:00").getTime() - new Date(a + "T00:00:00").getTime()
+  );
   return Math.round(ms / 86400000);
 };
 
@@ -173,14 +185,39 @@ const statusFor = (row: CapsuleRow) => {
   const today = new Date();
   const intro = row.introduced ? new Date(row.introduced + "T00:00:00") : null;
   const removed = row.removed ? new Date(row.removed + "T00:00:00") : null;
-  if (removed && today > removed) return { label: "Removed", tone: "bg-red-100 text-red-800" };
-  if (intro && today >= intro && (!removed || today <= removed)) return { label: "Active", tone: "bg-green-100 text-green-800" };
+  if (removed && today > removed)
+    return { label: "Removed", tone: "bg-red-100 text-red-800" };
+  if (intro && today >= intro && (!removed || today <= removed))
+    return { label: "Active", tone: "bg-green-100 text-green-800" };
   return { label: "Planned", tone: "bg-blue-100 text-blue-900" };
+};
+
+// Renders a right-side, multi-line label for ReferenceLine
+const RightMultiLineLabel: React.FC<{
+  viewBox?: { x: number; y: number; width: number; height: number };
+  lines: string[];
+  color?: string;
+}> = ({ viewBox, lines, color = "#111827" }) => {
+  if (!viewBox) return null as any;
+  const x = viewBox.x + viewBox.width + 8; // a bit to the right of the chart area
+  const y = viewBox.y;
+  return (
+    <text x={x} y={y} fill={color} fontSize={12} fontWeight={700}>
+      {lines.map((line, i) => (
+        <tspan key={i} x={x} dy={i === 0 ? 0 : 14}>
+          {line}
+        </tspan>
+      ))}
+    </text>
+  );
 };
 
 // --- UI ----------------------------------------------------------------------
 
-type SortKey = keyof Pick<CapsuleRow, "major" | "year" | "introduced" | "saleDate" | "removed">;
+type SortKey = keyof Pick<
+  CapsuleRow,
+  "major" | "year" | "introduced" | "saleDate" | "removed"
+>;
 
 type SortState = { key: SortKey; dir: "asc" | "desc" };
 
@@ -196,11 +233,17 @@ const sortBy = (rows: CapsuleRow[], { key, dir }: SortState) => {
 
 export default function CS2CapsuleTracker() {
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<SortState>({ key: "introduced", dir: "desc" });
+  const [sort, setSort] = useState<SortState>({
+    key: "introduced",
+    dir: "desc",
+  });
   const [yearFilter, setYearFilter] = useState<string>("");
 
   const years = useMemo(
-    () => Array.from(new Set(INITIAL_ROWS.map((r) => r.year))).sort((a, b) => b - a),
+    () =>
+      Array.from(new Set(INITIAL_ROWS.map((r) => r.year))).sort(
+        (a, b) => b - a
+      ),
     []
   );
 
@@ -209,13 +252,18 @@ export default function CS2CapsuleTracker() {
     let rows = INITIAL_ROWS.filter(
       (r) =>
         (!yearFilter || String(r.year) === yearFilter) &&
-        (!q || r.major.toLowerCase().includes(q) || r.city.toLowerCase().includes(q))
+        (!q ||
+          r.major.toLowerCase().includes(q) ||
+          r.city.toLowerCase().includes(q))
     );
     return sortBy(rows, sort);
   }, [query, yearFilter, sort]);
 
   const toggleSort = (key: SortKey) =>
-    setSort((prev) => ({ key, dir: prev.key === key && prev.dir === "asc" ? "desc" : "asc" }));
+    setSort((prev) => ({
+      key,
+      dir: prev.key === key && prev.dir === "asc" ? "desc" : "asc",
+    }));
 
   // Graph data (use full set so averages are consistent)
   const chartData = useMemo(
@@ -229,17 +277,26 @@ export default function CS2CapsuleTracker() {
   );
 
   const avgSale = useMemo(
-    () => (chartData.length ? chartData.reduce((acc, cur) => acc + cur.saleDuration, 0) / chartData.length : 0),
+    () =>
+      chartData.length
+        ? chartData.reduce((acc, cur) => acc + cur.saleDuration, 0) /
+          chartData.length
+        : 0,
     [chartData]
   );
   const avgAvail = useMemo(
-    () => (chartData.length ? chartData.reduce((acc, cur) => acc + cur.availability, 0) / chartData.length : 0),
+    () =>
+      chartData.length
+        ? chartData.reduce((acc, cur) => acc + cur.availability, 0) /
+          chartData.length
+        : 0,
     [chartData]
   );
 
   // --- Lightweight tests (console) ------------------------------------------
   useEffect(() => {
-    const t = (name: string, ok: boolean) => console.assert(ok, `Test failed: ${name}`);
+    const t = (name: string, ok: boolean) =>
+      console.assert(ok, `Test failed: ${name}`);
     // Helper sanity
     t("diffDays basic", diffDays("2024-01-01", "2024-01-11") === 10);
     // Known row checks
@@ -253,7 +310,10 @@ export default function CS2CapsuleTracker() {
     const austin = INITIAL_ROWS.find((r) => r.id === "austin-2025");
     if (austin) {
       t("austin removed null", austin.removed === null);
-      t("austin sale duration null", diffDays(austin.saleDate, austin.removed) === null);
+      t(
+        "austin sale duration null",
+        diffDays(austin.saleDate, austin.removed) === null
+      );
       t("austin availability running", (availabilityDays(austin) ?? 0) > 0);
     }
   }, []);
@@ -269,9 +329,12 @@ export default function CS2CapsuleTracker() {
           🎯 CS Major Capsule Tracking
         </motion.h1>
         <p className="mt-3 text-stone-600 max-w-3xl text-lg">
-          Follow the journey of each Major’s <span className="font-semibold">sticker capsule</span>: when it
-          <span className="text-green-700"> released</span>, when the <span className="text-blue-700">sale</span> began, and when it was
-          <span className="text-red-700"> finally removed</span> from the in‑game store.
+          Follow the journey of each Major’s{" "}
+          <span className="font-semibold">sticker capsule</span>: when it
+          <span className="text-green-700"> released</span>, when the{" "}
+          <span className="text-blue-700">sale</span> began, and when it was
+          finally
+          <span className="text-red-700"> removed</span> from the in‑game store.
         </p>
 
         <Card className="mt-8 border-stone-200 shadow-sm">
@@ -318,22 +381,33 @@ export default function CS2CapsuleTracker() {
                 <thead>
                   <tr className="text-left text-stone-500">
                     <th className="py-2 pr-4">Major / City</th>
-                    <th className="py-2 pr-4 cursor-pointer" onClick={() => toggleSort("introduced")}>
+                    <th
+                      className="py-2 pr-4 cursor-pointer"
+                      onClick={() => toggleSort("introduced")}
+                    >
                       <div className="inline-flex items-center gap-1">
                         Introduced <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>
-                    <th className="py-2 pr-4 cursor-pointer" onClick={() => toggleSort("saleDate")}>
+                    <th
+                      className="py-2 pr-4 cursor-pointer"
+                      onClick={() => toggleSort("saleDate")}
+                    >
                       <div className="inline-flex items-center gap-1">
                         Sale <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>
-                    <th className="py-2 pr-4 cursor-pointer" onClick={() => toggleSort("removed")}>
+                    <th
+                      className="py-2 pr-4 cursor-pointer"
+                      onClick={() => toggleSort("removed")}
+                    >
                       <div className="inline-flex items-center gap-1 text-red-600">
                         Removed <ArrowUpDown className="w-3 h-3" />
                       </div>
                     </th>
-                    <th className="py-2 pr-4">Availability (intro → removal)</th>
+                    <th className="py-2 pr-4">
+                      Availability (intro → removal)
+                    </th>
                     <th className="py-2 pr-4">Duration (sale → removal)</th>
                     <th className="py-2 pr-4">Winner</th>
                     <th className="py-2">Status</th>
@@ -343,7 +417,10 @@ export default function CS2CapsuleTracker() {
                   {filtered.map((row) => {
                     const status = statusFor(row);
                     return (
-                      <tr key={row.id} className="border-t border-stone-200 hover:bg-stone-50">
+                      <tr
+                        key={row.id}
+                        className="border-t border-stone-200 hover:bg-stone-50"
+                      >
                         <td className="py-3 pr-4">
                           <div className="flex items-center gap-2">
                             {row.logo ? (
@@ -353,14 +430,18 @@ export default function CS2CapsuleTracker() {
                                 className="w-6 h-6 rounded-sm object-contain ring-1 ring-stone-200 bg-white"
                                 loading="lazy"
                                 onError={(e) => {
-                                  (e.currentTarget as HTMLImageElement).style.visibility = "hidden";
+                                  (
+                                    e.currentTarget as HTMLImageElement
+                                  ).style.visibility = "hidden";
                                 }}
                               />
                             ) : (
                               <div className="w-6 h-6 rounded-sm bg-stone-200" />
                             )}
                             <div>
-                              <div className="font-semibold text-stone-800">{row.major}</div>
+                              <div className="font-semibold text-stone-800">
+                                {row.major}
+                              </div>
                               <div className="text-stone-500">
                                 {row.city} · {row.year}
                               </div>
@@ -371,14 +452,18 @@ export default function CS2CapsuleTracker() {
                         <td className="py-3 pr-4">{fmt(row.saleDate)}</td>
                         <td className="py-3 pr-4">
                           {row.removed ? (
-                            <span className="text-red-700 font-medium">{fmt(row.removed)}</span>
+                            <span className="text-red-700 font-medium">
+                              {fmt(row.removed)}
+                            </span>
                           ) : (
                             <span className="text-stone-400">—</span>
                           )}
                         </td>
                         <td className="py-3 pr-4">
                           {availabilityDays(row)
-                            ? `${availabilityDays(row)} days${row.removed ? "" : " (so far)"}`
+                            ? `${availabilityDays(row)} days${
+                                row.removed ? "" : " (so far)"
+                              }`
                             : "—"}
                         </td>
                         <td className="py-3 pr-4">
@@ -388,7 +473,9 @@ export default function CS2CapsuleTracker() {
                         </td>
                         <td className="py-3 pr-4">{row.winner ?? "—"}</td>
                         <td className="py-3">
-                          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs ${status.tone}`}>
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs ${status.tone}`}
+                          >
                             <CalendarDays className="w-3 h-3" /> {status.label}
                           </span>
                         </td>
@@ -402,38 +489,79 @@ export default function CS2CapsuleTracker() {
             <div className="mt-4 text-xs text-stone-500 flex items-start gap-2">
               <Info className="w-4 h-4 mt-0.5" />
               <p>
-                Data is curated from developer posts and community reporting. Data may be inaccurate.
+                Data is curated from developer posts and community reporting.
+                Data may be inaccurate. Please contact @.meista on Discord to
+                report any inaccuracies.
               </p>
             </div>
           </CardContent>
         </Card>
 
         <div className="mt-10">
-          <h2 className="text-2xl font-bold text-stone-800 mb-4">📊 Duration Overview</h2>
+          <h2 className="text-2xl font-bold text-stone-800 mb-4">
+            📊 Duration Overview
+          </h2>
           <ResponsiveContainer width="100%" height={360}>
-            <BarChart data={chartData} margin={{ top: 20, right: 120, left: 0, bottom: 5 }}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 50, right: 200, left: 0, bottom: 20 }} // more space on the right for labels
+            >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="major" tick={{ fontSize: 12 }} interval={0} angle={-20} textAnchor="end" />
+              <XAxis
+                dataKey="major"
+                tick={{ fontSize: 12 }}
+                interval={0}
+                angle={-20}
+                textAnchor="end"
+                height={60} // more room for long names
+              />
               <YAxis />
               <Tooltip />
-              <Legend />
+              <Legend
+                verticalAlign="top"
+                align="left"
+                height={32} // reserves space so it won't overlap
+                wrapperStyle={{ paddingBottom: 8 }}
+              />
+
               {/* Availability first, then Sale Duration */}
-              <Bar dataKey="availability" name="Intro → Removal" fill="#10b981" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="saleDuration" name="Sale → Removal" fill="#6366f1" radius={[6, 6, 0, 0]} />
-              {/* Clear, high-contrast average labels pinned to right margin */}
+              <Bar
+                dataKey="availability"
+                name="Intro → Removal"
+                fill="#10b981"
+                radius={[6, 6, 0, 0]}
+              />
+              <Bar
+                dataKey="saleDuration"
+                name="Sale → Removal"
+                fill="#6366f1"
+                radius={[6, 6, 0, 0]}
+              />
+
+              {/* Multi-line, high-contrast average labels on the right */}
               <ReferenceLine
                 ifOverflow="extendDomain"
                 y={avgAvail}
                 stroke="#10b981"
                 strokeDasharray="5 5"
-                label={{ value: `Average availibility: ${avgAvail.toFixed(0)} days`, position: "right", fill: "#111827", fontWeight: 700 }}
+                label={
+                  <RightMultiLineLabel
+                    lines={["Average", `avail: ${avgAvail.toFixed(0)}d`]}
+                    color="#111827"
+                  />
+                }
               />
               <ReferenceLine
                 ifOverflow="extendDomain"
                 y={avgSale}
                 stroke="#6366f1"
                 strokeDasharray="5 5"
-                label={{ value: `Average sale: ${avgSale.toFixed(0)} days`, position: "right", fill: "#111827", fontWeight: 700 }}
+                label={
+                  <RightMultiLineLabel
+                    lines={["Average", `sale: ${avgSale.toFixed(0)}d`]}
+                    color="#111827"
+                  />
+                }
               />
             </BarChart>
           </ResponsiveContainer>
