@@ -266,11 +266,11 @@ export default function CS2CapsuleTracker() {
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl font-extrabold tracking-tight text-stone-800"
         >
-          🎯 CS Major Capsule Chronicle
+          🎯 CS Major Capsule Tracking
         </motion.h1>
         <p className="mt-3 text-stone-600 max-w-3xl text-lg">
           Follow the journey of each Major’s <span className="font-semibold">sticker capsule</span>: when it
-          <span className="text-blue-700"> arrived</span>, when the <span className="text-amber-700">sale</span> began, and when it was
+          <span className="text-blue-700"> released</span>, when the <span className="text-amber-700">sale</span> began, and when it was
           <span className="text-red-700"> removed</span> from the in‑game store.
         </p>
 
@@ -282,7 +282,7 @@ export default function CS2CapsuleTracker() {
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="🔍 Search a Major or city…"
+                  placeholder="🔍 Search a Major or city"
                   className="max-w-sm"
                 />
               </div>
@@ -402,7 +402,7 @@ export default function CS2CapsuleTracker() {
             <div className="mt-4 text-xs text-stone-500 flex items-start gap-2">
               <Info className="w-4 h-4 mt-0.5" />
               <p>
-                Dates are curated from developer posts and reputable community reporting. Always double‑check if you’re trading.
+                Data is curated from developer posts and community reporting. Data may be inaccurate.
               </p>
             </div>
           </CardContent>
@@ -426,14 +426,14 @@ export default function CS2CapsuleTracker() {
                 y={avgAvail}
                 stroke="#10b981"
                 strokeDasharray="5 5"
-                label={{ value: `Avg avail ${avgAvail.toFixed(0)}d`, position: "right", fill: "#111827", fontWeight: 700 }}
+                label={{ value: `Average availibility: ${avgAvail.toFixed(0)} days`, position: "right", fill: "#111827", fontWeight: 700 }}
               />
               <ReferenceLine
                 ifOverflow="extendDomain"
                 y={avgSale}
                 stroke="#6366f1"
                 strokeDasharray="5 5"
-                label={{ value: `Avg sale ${avgSale.toFixed(0)}d`, position: "right", fill: "#111827", fontWeight: 700 }}
+                label={{ value: `Average sale: ${avgSale.toFixed(0)} days`, position: "right", fill: "#111827", fontWeight: 700 }}
               />
             </BarChart>
           </ResponsiveContainer>
