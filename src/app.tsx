@@ -219,12 +219,19 @@ const RightMultiLineLabel: React.FC<{
   // If outside: draw just to the right (will be clipped unless margin is huge).
   const padding = 8;
   const x = inside
-    ? viewBox.x + viewBox.width - padding           // inside-right
-    : viewBox.x + viewBox.width + padding;          // outside-right (gets clipped)
+    ? viewBox.x + viewBox.width - padding // inside-right
+    : viewBox.x + viewBox.width + padding; // outside-right (gets clipped)
   const y = viewBox.y + dy;
 
   return (
-    <text x={x} y={y} fill={color} fontSize={12} fontWeight={700} textAnchor={inside ? "end" : "start"}>
+    <text
+      x={x}
+      y={y}
+      fill={color}
+      fontSize={12}
+      fontWeight={700}
+      textAnchor={inside ? "end" : "start"}
+    >
       {lines.map((line, i) => (
         <tspan key={i} x={x} dy={i === 0 ? 0 : 14}>
           {line}
@@ -362,196 +369,66 @@ export default function CS2CapsuleTracker() {
     }
   }, []);
 
-  return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-stone-50 to-stone-100 text-stone-900">
-      <div className="w-full px-2 sm:px-4 lg:px-6 py-10">
-        <motion.h1
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-extrabold tracking-tight text-stone-800"
-        >
-          🎯 CS Major Capsule Tracking
-        </motion.h1>
-        <p className="mt-3 text-stone-600 max-w-3xl text-lg">
-          Follow the journey of each Major’s{" "}
-          <span className="font-semibold">sticker capsule</span>: when it
-          <span className="text-green-700"> released</span>, when the{" "}
-          <span className="text-blue-700">sale</span> began, and when it was
-          finally
-          <span className="text-red-700"> removed</span> from the in‑game store.
-        </p>
+  export default function ChartSection({
+    chartData,
+    avgAvail,
+    avgSale,
+    avgAvail5,
+    avgSale5,
+  }: {
+    chartData: Array<{
+      major: string;
+      availability: number;
+      saleDuration: number;
+    }>;
+    avgAvail: number;
+    avgSale: number;
+    avgAvail5: number;
+    avgSale5: number;
+  }) {
+    return (
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
+          📊 Duration Overview
+        </h2>
 
-        <Card className="mt-8 border-stone-200 shadow-sm">
-          <CardContent className="p-4 md:p-6">
-            <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-              <div className="flex flex-1 items-center gap-2">
-                <Search className="w-4 h-4 text-stone-500" />
-                <Input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search a Major or city"
-                  className="max-w-sm"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4 text-stone-500" />
-                <select
-                  value={yearFilter}
-                  onChange={(e) => setYearFilter(e.target.value)}
-                  className="border rounded-xl px-3 py-2 bg-white shadow-sm"
-                >
-                  <option value="">All years</option>
-                  {years.map((y) => (
-                    <option key={y} value={String(y)}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setQuery("");
-                    setYearFilter("");
-                  }}
-                  className="rounded-2xl"
-                >
-                  Reset
-                </Button>
-              </div>
+        <div className="relative">
+          {/* Overlay with the 4 averages (never clipped, never overlaps) */}
+          <div className="absolute right-2 top-2 z-10 text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
+            <div style={{ color: "#10b981", fontWeight: 700 }}>Average</div>
+            <div style={{ color: "#10b981" }}>
+              avail: {avgAvail.toFixed(0)} days
             </div>
 
-            <div className="mt-6 overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead>
-                  <tr className="text-left text-stone-500">
-                    <th className="py-2 pr-4">Major / City</th>
-                    <th
-                      className="py-2 pr-4 cursor-pointer"
-                      onClick={() => toggleSort("introduced")}
-                    >
-                      <div className="inline-flex items-center gap-1">
-                        Introduced <ArrowUpDown className="w-3 h-3" />
-                      </div>
-                    </th>
-                    <th
-                      className="py-2 pr-4 cursor-pointer"
-                      onClick={() => toggleSort("saleDate")}
-                    >
-                      <div className="inline-flex items-center gap-1">
-                        Sale <ArrowUpDown className="w-3 h-3" />
-                      </div>
-                    </th>
-                    <th
-                      className="py-2 pr-4 cursor-pointer"
-                      onClick={() => toggleSort("removed")}
-                    >
-                      <div className="inline-flex items-center gap-1 text-red-600">
-                        Removed <ArrowUpDown className="w-3 h-3" />
-                      </div>
-                    </th>
-                    <th className="py-2 pr-4">
-                      Availability (intro → removal)
-                    </th>
-                    <th className="py-2 pr-4">Duration (sale → removal)</th>
-                    <th className="py-2 pr-4">Champion</th>
-                    <th className="py-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((row) => {
-                    const status = statusFor(row);
-                    return (
-                      <tr
-                        key={row.id}
-                        className="border-t border-stone-200 hover:bg-stone-50"
-                      >
-                        <td className="py-3 pr-4">
-                          <div className="flex items-center gap-2">
-                            {row.logo ? (
-                              <img
-                                src={row.logo}
-                                alt={row.major ?? "logo"}
-                                className="w-6 h-6 rounded-sm object-contain ring-1 ring-stone-200 bg-white"
-                                loading="lazy"
-                                onError={(e) => {
-                                  (
-                                    e.currentTarget as HTMLImageElement
-                                  ).style.visibility = "hidden";
-                                }}
-                              />
-                            ) : (
-                              <div className="w-6 h-6 rounded-sm bg-stone-200" />
-                            )}
-                            <div>
-                              <div className="font-semibold text-stone-800">
-                                {row.major}
-                              </div>
-                              <div className="text-stone-500">
-                                {row.city} · {row.year}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3 pr-4">{fmt(row.introduced)}</td>
-                        <td className="py-3 pr-4">{fmt(row.saleDate)}</td>
-                        <td className="py-3 pr-4">
-                          {row.removed ? (
-                            <span className="text-red-700 font-medium">
-                              {fmt(row.removed)}
-                            </span>
-                          ) : (
-                            <span className="text-stone-400">—</span>
-                          )}
-                        </td>
-                        <td className="py-3 pr-4">
-                          {availabilityDays(row)
-                            ? `${availabilityDays(row)} days${
-                                row.removed ? "" : " (so far)"
-                              }`
-                            : "—"}
-                        </td>
-                        <td className="py-3 pr-4">
-                          {diffDays(row.saleDate, row.removed)
-                            ? `${diffDays(row.saleDate, row.removed)} days`
-                            : "—"}
-                        </td>
-                        <td className="py-3 pr-4">{row.winner ?? "—"}</td>
-                        <td className="py-3">
-                          <span
-                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs ${status.tone}`}
-                          >
-                            <CalendarDays className="w-3 h-3" /> {status.label}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            <div style={{ color: "#6366f1", fontWeight: 700, marginTop: 4 }}>
+              Average
+            </div>
+            <div style={{ color: "#6366f1" }}>
+              sale: {avgSale.toFixed(0)} days
             </div>
 
-            <div className="mt-4 text-xs text-stone-500 flex items-start gap-2">
-              <Info className="w-4 h-4 mt-0.5" />
-              <p>
-                Data is curated from developer posts and community reporting.
-                Data may be inaccurate. Please contact @.meista on Discord to
-                report any inaccuracies.
-              </p>
+            <div style={{ color: "#0ea5e9", fontWeight: 700, marginTop: 4 }}>
+              Avg (last 5 Majors)
             </div>
-          </CardContent>
-        </Card>
+            <div style={{ color: "#0ea5e9" }}>
+              avail: {avgAvail5.toFixed(0)} days
+            </div>
 
-        <div className="mt-10">
-          <h2 className="text-2xl font-bold text-stone-800 mb-4">
-            📊 Duration Overview
-          </h2>
+            <div style={{ color: "#7c3aed", fontWeight: 700, marginTop: 4 }}>
+              Avg (last 5 Majors)
+            </div>
+            <div style={{ color: "#7c3aed" }}>
+              sale: {avgSale5.toFixed(0)} days
+            </div>
+          </div>
+
           <div className="overflow-x-auto">
-            {/* On mobile: enforce min-width for swipe; on large screens: remove the cap so it can fill */}
+            {/* On mobile: enforce min width for swipe; on large screens: expand fully */}
             <div className="w-full min-w-[900px] lg:min-w-0">
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
                   data={chartData}
-                  margin={{ top: 50, right: 200, left: 0, bottom: 20 }} // more space on the right for labels
+                  margin={{ top: 50, right: 24, left: 0, bottom: 20 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
@@ -560,24 +437,21 @@ export default function CS2CapsuleTracker() {
                     interval={0}
                     angle={-20}
                     textAnchor="end"
-                    height={60} // more room for long names
+                    height={60}
                   />
                   <YAxis />
                   <Tooltip
-                    formatter={(value: any, name: string) => {
-                      // name is e.g. "Intro → Removal" or "Sale → Removal"
-                      return [value, name]; // Recharts will render as "Intro → Removal: 114" (no extra space)
-                    }}
-                    labelFormatter={(label) => `${label}`} // keep major name as-is
+                    formatter={(v: any, n: string) => [v, n]}
+                    labelFormatter={(l) => `${l}`}
                   />
                   <Legend
                     verticalAlign="top"
                     align="left"
-                    height={32} // reserves space so it won't overlap
+                    height={32}
                     wrapperStyle={{ paddingBottom: 8 }}
                   />
 
-                  {/* Availability first, then Sale Duration */}
+                  {/* Bars */}
                   <Bar
                     dataKey="availability"
                     name="Intro → Removal"
@@ -591,69 +465,30 @@ export default function CS2CapsuleTracker() {
                     radius={[6, 6, 0, 0]}
                   />
 
-                  {/* Multi-line, high-contrast average labels on the right */}
+                  {/* Reference lines WITHOUT labels (no clipping) */}
                   <ReferenceLine
                     ifOverflow="extendDomain"
                     y={avgAvail}
                     stroke="#10b981"
                     strokeDasharray="5 5"
-                    label={
-                      <RightMultiLineLabel
-                        lines={[
-                          "Average",
-                          `avail: ${avgAvail.toFixed(0)} days`,
-                        ]}
-                        color="#111827"
-                        dy={-24}
-                      />
-                    }
                   />
                   <ReferenceLine
                     ifOverflow="extendDomain"
                     y={avgSale}
                     stroke="#6366f1"
                     strokeDasharray="5 5"
-                    label={
-                      <RightMultiLineLabel
-                        lines={["Average", `sale: ${avgSale.toFixed(0)} days`]}
-                        color="#111827"
-                        dy={0}
-                      />
-                    }
                   />
-                  {/* Last 5 majors averages (same multi-line label formatting) */}
                   <ReferenceLine
                     ifOverflow="extendDomain"
                     y={avgAvail5}
                     stroke="#0ea5e9"
                     strokeDasharray="3 3"
-                    label={
-                      <RightMultiLineLabel
-                        lines={[
-                          "Avg (last 5 Majors)",
-                          `avail: ${avgAvail5.toFixed(0)} days`,
-                        ]}
-                        color="#0ea5e9"
-                        dy={24}
-                      />
-                    }
                   />
-
                   <ReferenceLine
                     ifOverflow="extendDomain"
                     y={avgSale5}
                     stroke="#7c3aed"
                     strokeDasharray="3 3"
-                    label={
-                      <RightMultiLineLabel
-                        lines={[
-                          "Avg (last 5 Majors)",
-                          `sale: ${avgSale5.toFixed(0)} days`,
-                        ]}
-                        color="#7c3aed"
-                        dy={48}
-                      />
-                    }
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -661,6 +496,6 @@ export default function CS2CapsuleTracker() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
