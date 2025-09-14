@@ -416,45 +416,46 @@ export default function CS2CapsuleTracker() {
     () =>
       INITIAL_ROWS.map((r) => ({
         major: r.major,
-        availability: availabilityDays(r), // may be null
-        saleDuration: diffDays(r.saleDate, r.removed), // may be null
+        availability: availabilityDays(r) ?? 0,
+        saleDuration: diffDays(r.saleDate, r.removed) ?? 0,
       })),
     []
   );
 
-  const avgSale = useMemo(() => {
-    const valid = chartData
-      .map((c) => c.saleDuration)
-      .filter((v): v is number => v !== null);
-    return valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : 0;
-  }, [chartData]);
-
-  const avgAvail = useMemo(() => {
-    const valid = chartData
-      .map((c) => c.availability)
-      .filter((v): v is number => v !== null);
-    return valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : 0;
-  }, [chartData]);
+  const avgSale = useMemo(
+    () =>
+      chartData.length
+        ? chartData.reduce((acc, cur) => acc + cur.saleDuration, 0) /
+          chartData.length
+        : 0,
+    [chartData]
+  );
+  const avgAvail = useMemo(
+    () =>
+      chartData.length
+        ? chartData.reduce((acc, cur) => acc + cur.availability, 0) /
+          chartData.length
+        : 0,
+    [chartData]
+  );
 
   // --- Averages for the last 5 majors (by Introduced date, most recent first) ---
-  const points = recent.map((r) => ({
-    availability: availabilityDays(r),
-    saleDuration: diffDays(r.saleDate, r.removed),
-  }));
-
-  const availVals = points
-    .map((p) => p.availability)
-    .filter((v): v is number => v !== null);
-  const saleVals = points
-    .map((p) => p.saleDuration)
-    .filter((v): v is number => v !== null);
-
-  const avgAvail5 = availVals.length
-    ? availVals.reduce((s, v) => s + v, 0) / availVals.length
-    : 0;
-  const avgSale5 = saleVals.length
-    ? saleVals.reduce((s, v) => s + v, 0) / saleVals.length
-    : 0;
+  const last5Averages = useMemo(() => {
+    const parse = (d: string | null) =>
+      d ? new Date(d + "T00:00:00").getTime() : 0;
+    const recent = INITIAL_ROWS.filter((r) => !!r.introduced)
+      .sort((a, b) => parse(b.introduced) - parse(a.introduced))
+      .slice(0, 5);
+    const points = recent.map((r) => ({
+      availability: availabilityDays(r) ?? 0,
+      saleDuration: diffDays(r.saleDate, r.removed) ?? 0,
+    }));
+    const denom = points.length || 1;
+    const avgAvail5 = points.reduce((s, p) => s + p.availability, 0) / denom;
+    const avgSale5 = points.reduce((s, p) => s + p.saleDuration, 0) / denom;
+    return { avgAvail5, avgSale5 };
+  }, []);
+  const { avgAvail5, avgSale5 } = last5Averages;
 
   // --- Lightweight tests (console) ------------------------------------------
   useEffect(() => {
