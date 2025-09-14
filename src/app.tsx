@@ -646,6 +646,12 @@ export default function CS2CapsuleTracker() {
             <div className="overflow-x-auto">
               <TableSection rows={filtered} onSort={toggleSort} />
             </div>
+
+            <p className="mt-3 text-xs text-stone-500">
+              ⓘ Data is curated from blog posts and community reporting.
+              Some dates may be inaccurate. Please contact @.meista on Discord
+              to report corrections.
+            </p>
           </CardContent>
         </Card>
 
