@@ -816,9 +816,16 @@ export default function CS2CapsuleTracker() {
           avgSale5={avgSale5}
         />
       </div>
-      {/* Footer */}
       <footer className="mt-12 py-6 text-center text-sm text-stone-500">
-        made with <span className="text-red-500">♥</span> by meista
+        made with <span className="text-red-500">♥</span> by{" "}
+        <a
+          href="https://steamcommunity.com/profiles/76561198070775836"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+        >
+          meista
+        </a>
       </footer>
     </div>
   );
