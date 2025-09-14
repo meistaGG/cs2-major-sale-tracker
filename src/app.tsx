@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, CalendarDays, Search, Filter, Info } from "lucide-react";
+import { ArrowUpDown, CalendarDays, Search, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -241,7 +241,6 @@ type SortKey = keyof Pick<
   CapsuleRow,
   "major" | "year" | "introduced" | "saleDate" | "removed"
 >;
-
 type SortState = { key: SortKey; dir: "asc" | "desc" };
 
 const sortBy = (rows: CapsuleRow[], { key, dir }: SortState) => {
@@ -359,7 +358,7 @@ export default function CS2CapsuleTracker() {
     }
   }, []);
 
-  // --- Local Chart component (kept top-level in file scope of App) -----------
+  // --- Local Chart component --------------------------------------------------
   function ChartSection({
     chartData,
     avgAvail,
@@ -382,6 +381,7 @@ export default function CS2CapsuleTracker() {
         <h2 className="text-2xl font-bold text-stone-800 mb-4">
           📊 Duration Overview
         </h2>
+
         <div className="relative">
           {/* Overlay with the 4 averages (never clipped, never overlaps) */}
           <div className="absolute right-2 top-2 z-10 text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
@@ -389,18 +389,21 @@ export default function CS2CapsuleTracker() {
             <div style={{ color: "#10b981" }}>
               avail: {avgAvail.toFixed(0)} days
             </div>
+
             <div style={{ color: "#6366f1", fontWeight: 700, marginTop: 4 }}>
               Average
             </div>
             <div style={{ color: "#6366f1" }}>
               sale: {avgSale.toFixed(0)} days
             </div>
+
             <div style={{ color: "#0ea5e9", fontWeight: 700, marginTop: 4 }}>
               Avg (last 5 Majors)
             </div>
             <div style={{ color: "#0ea5e9" }}>
               avail: {avgAvail5.toFixed(0)} days
             </div>
+
             <div style={{ color: "#7c3aed", fontWeight: 700, marginTop: 4 }}>
               Avg (last 5 Majors)
             </div>
@@ -448,6 +451,7 @@ export default function CS2CapsuleTracker() {
                     fill="#6366f1"
                     radius={[6, 6, 0, 0]}
                   />
+                  {/* Lines only; text lives in overlay to avoid clipping/overlap */}
                   <ReferenceLine
                     ifOverflow="extendDomain"
                     y={avgAvail}
@@ -481,6 +485,119 @@ export default function CS2CapsuleTracker() {
     );
   }
 
+  // --- Table component --------------------------------------------------------
+  function TableSection({
+    rows,
+    onSort,
+  }: {
+    rows: CapsuleRow[];
+    onSort: (k: SortKey) => void;
+  }) {
+    return (
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold text-stone-800 mb-4">
+          🗂️ Capsule Timeline
+        </h2>
+
+        <Card className="border-stone-200 shadow-sm">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-stone-50 text-stone-600">
+                  <tr>
+                    <th className="text-left py-3 pl-4 pr-4">Tournament</th>
+                    <th
+                      className="py-3 pr-4 cursor-pointer"
+                      onClick={() => onSort("introduced")}
+                    >
+                      <div className="inline-flex items-center gap-1">
+                        Introduced <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th
+                      className="py-3 pr-4 cursor-pointer"
+                      onClick={() => onSort("saleDate")}
+                    >
+                      <div className="inline-flex items-center gap-1">
+                        Sale <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th
+                      className="py-3 pr-4 cursor-pointer"
+                      onClick={() => onSort("removed")}
+                    >
+                      <div className="inline-flex items-center gap-1">
+                        Removed <ArrowUpDown className="w-3 h-3" />
+                      </div>
+                    </th>
+                    <th className="py-3 pr-4">Avail. (days)</th>
+                    <th className="py-3 pr-4">Sale → Removal (days)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100">
+                  {rows.map((r) => {
+                    const avail = availabilityDays(r);
+                    const saleDur = diffDays(r.saleDate, r.removed);
+                    return (
+                      <tr key={r.id} className="align-top">
+                        {/* Tournament cell with logo + name + winner */}
+                        <td className="py-3 pl-4 pr-4">
+                          <div className="flex items-start gap-3">
+                            {r.logo ? (
+                              <img
+                                src={r.logo}
+                                alt={r.major}
+                                className="w-6 h-6 rounded-sm object-contain mt-[2px]"
+                              />
+                            ) : (
+                              <div className="w-6 h-6 rounded-sm bg-stone-200 mt-[2px]" />
+                            )}
+                            <div>
+                              <div className="font-semibold text-stone-800 leading-5">
+                                {r.major}
+                              </div>
+                              <div className="text-stone-500 text-xs leading-4 flex items-center gap-1">
+                                <CalendarDays className="w-3 h-3" /> {r.city} ·{" "}
+                                {r.year}
+                                {r.winner ? (
+                                  <span className="ml-2">{r.winner}</span>
+                                ) : null}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Dates */}
+                        <td className="py-3 pr-4 whitespace-nowrap">
+                          {fmt(r.introduced)}
+                        </td>
+                        <td className="py-3 pr-4 whitespace-nowrap">
+                          {fmt(r.saleDate)}
+                        </td>
+                        <td className="py-3 pr-4 whitespace-nowrap text-red-600 font-semibold">
+                          {fmt(r.removed)}
+                        </td>
+
+                        {/* Durations */}
+                        <td className="py-3 pr-4 font-medium text-stone-800">
+                          {avail ?? "—"}
+                        </td>
+                        <td className="py-3 pr-4 font-medium text-stone-800">
+                          {saleDur ?? "—"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // --- Page -------------------------------------------------------------------
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-10 text-stone-900">
       <div className="mx-auto max-w-screen-2xl">
@@ -547,7 +664,8 @@ export default function CS2CapsuleTracker() {
           avgAvail5={avgAvail5}
           avgSale5={avgSale5}
         />
-        
+
+        {/* Table section */}
         <TableSection rows={filtered} onSort={toggleSort} />
       </div>
     </div>
