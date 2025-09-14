@@ -359,7 +359,7 @@ export default function CS2CapsuleTracker() {
           <tr>
             <th className="text-left py-3 pl-4 pr-4">Major / City</th>
             <th
-              className="py-3 pl-4 pr-4 cursor-pointer"
+              className="text-left py-3 pl-4 pr-4 cursor-pointer"
               onClick={() => onSort("introduced")}
             >
               <div className="inline-flex items-center gap-1">
@@ -367,7 +367,7 @@ export default function CS2CapsuleTracker() {
               </div>
             </th>
             <th
-              className="py-3 pl-4 pr-4 cursor-pointer"
+              className="text-left py-3 pl-4 pr-4 cursor-pointer"
               onClick={() => onSort("saleDate")}
             >
               <div className="inline-flex items-center gap-1">
@@ -375,17 +375,17 @@ export default function CS2CapsuleTracker() {
               </div>
             </th>
             <th
-              className="py-3 pl-4 pr-4 cursor-pointer"
+              className="text-left py-3 pl-4 pr-4 cursor-pointer"
               onClick={() => onSort("removed")}
             >
               <div className="inline-flex items-center gap-1">
                 Removed <ArrowUpDown className="w-3 h-3" />
               </div>
             </th>
-            <th className="py-3 pl-4 pr-4">Availability (intro → removal)</th>
-            <th className="py-3 pl-4 pr-4">Duration (sale → removal)</th>
-            <th className="py-3 pl-4 pr-4">Champion</th>
-            <th className="py-3 pl-4 pr-4">Status</th>
+            <th className="text-left py-3 pl-4 pr-4">Availability (intro → removal)</th>
+            <th className="text-left py-3 pl-4 pr-4">Duration (sale → removal)</th>
+            <th className="text-left py-3 pl-4 pr-4">Champion</th>
+            <th className="text-left py-3 pl-4 pr-4">Status</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-stone-100">
@@ -410,31 +410,31 @@ export default function CS2CapsuleTracker() {
                 </td>
 
                 {/* Dates */}
-                <td className="py-3 pr-4 whitespace-nowrap">
+                <td className="py-3 pl-4 pr-4 whitespace-nowrap">
                   {fmt(r.introduced)}
                 </td>
-                <td className="py-3 pr-4 whitespace-nowrap">
+                <td className="py-3 pl-4 pr-4 whitespace-nowrap">
                   {fmt(r.saleDate)}
                 </td>
-                <td className="py-3 pr-4 whitespace-nowrap text-red-600 font-semibold">
+                <td className="py-3 pl-4 pr-4 whitespace-nowrap text-red-600 font-semibold">
                   {fmt(r.removed)}
                 </td>
 
                 {/* Durations */}
-                <td className="py-3 pr-4 font-medium text-stone-800">
+                <td className="py-3 pl-4 pr-4 font-medium text-stone-800">
                   {avail !== null
                     ? `${avail} days${r.removed ? "" : " (so far)"}`
                     : "—"}
                 </td>
-                <td className="py-3 pr-4 font-medium text-stone-800">
+                <td className="py-3 pl-4 pr-4 font-medium text-stone-800">
                   {saleDur !== null ? `${saleDur} days` : "—"}
                 </td>
 
                 {/* Winner */}
-                <td className="py-3 pr-4">{r.winner || "—"}</td>
+                <td className="py-3 pl-4 pr-4">{r.winner || "—"}</td>
 
                 {/* Status pill */}
-                <td className="py-3 pr-4">
+                <td className="py-3 pl-4 pr-4">
                   <span
                     className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium ${status.tone}`}
                   >
