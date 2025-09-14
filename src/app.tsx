@@ -422,40 +422,42 @@ export default function CS2CapsuleTracker() {
     []
   );
 
-  const avgSale = useMemo(
-    () =>
-      chartData.length
-        ? chartData.reduce((acc, cur) => acc + cur.saleDuration, 0) /
-          chartData.length
-        : 0,
-    [chartData]
-  );
-  const avgAvail = useMemo(
-    () =>
-      chartData.length
-        ? chartData.reduce((acc, cur) => acc + cur.availability, 0) /
-          chartData.length
-        : 0,
-    [chartData]
-  );
+  const isNum = (v: number | null): v is number => v !== null;
+
+  const avgSale = useMemo(() => {
+    const vals = INITIAL_ROWS.map((r) =>
+      diffDays(r.saleDate, r.removed)
+    ).filter(isNum);
+    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+  }, []);
+
+  const avgAvail = useMemo(() => {
+    const vals = INITIAL_ROWS.map((r) => availabilityDays(r)).filter(isNum);
+    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+  }, []);
 
   // --- Averages for the last 5 majors (by Introduced date, most recent first) ---
-  const last5Averages = useMemo(() => {
+  const { avgAvail5, avgSale5 } = useMemo(() => {
     const parse = (d: string | null) =>
       d ? new Date(d + "T00:00:00").getTime() : 0;
     const recent = INITIAL_ROWS.filter((r) => !!r.introduced)
       .sort((a, b) => parse(b.introduced) - parse(a.introduced))
       .slice(0, 5);
-    const points = recent.map((r) => ({
-      availability: availabilityDays(r) ?? 0,
-      saleDuration: diffDays(r.saleDate, r.removed) ?? 0,
-    }));
-    const denom = points.length || 1;
-    const avgAvail5 = points.reduce((s, p) => s + p.availability, 0) / denom;
-    const avgSale5 = points.reduce((s, p) => s + p.saleDuration, 0) / denom;
+
+    const availVals = recent.map((r) => availabilityDays(r)).filter(isNum);
+    const saleVals = recent
+      .map((r) => diffDays(r.saleDate, r.removed))
+      .filter(isNum);
+
+    const avgAvail5 = availVals.length
+      ? availVals.reduce((a, b) => a + b, 0) / availVals.length
+      : 0;
+    const avgSale5 = saleVals.length
+      ? saleVals.reduce((a, b) => a + b, 0) / saleVals.length
+      : 0;
+
     return { avgAvail5, avgSale5 };
   }, []);
-  const { avgAvail5, avgSale5 } = last5Averages;
 
   // --- Lightweight tests (console) ------------------------------------------
   useEffect(() => {
@@ -663,7 +665,7 @@ export default function CS2CapsuleTracker() {
                   />
                   <YAxis />
                   <Tooltip
-                    formatter={(v: any, n: string) => [v, n]}
+                    formatter={(v: any, n: string) => [v ?? "—", n]}
                     labelFormatter={(l) => `${l}`}
                   />
                   <Legend
