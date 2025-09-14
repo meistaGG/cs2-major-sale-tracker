@@ -481,7 +481,6 @@ export default function CS2CapsuleTracker() {
     );
   }
 
-  // ✅ RETURN UI (previous white screen was because we weren't returning anything)
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-10 text-stone-900">
       <div className="mx-auto max-w-screen-2xl">
@@ -507,7 +506,7 @@ export default function CS2CapsuleTracker() {
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="🔍 Search a Major or city…"
+                  placeholder="Search a Major or city"
                   className="max-w-sm"
                 />
               </div>
@@ -548,6 +547,8 @@ export default function CS2CapsuleTracker() {
           avgAvail5={avgAvail5}
           avgSale5={avgSale5}
         />
+        
+        <TableSection rows={filtered} onSort={toggleSort} />
       </div>
     </div>
   );
