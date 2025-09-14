@@ -353,21 +353,28 @@ type SortKey = keyof Pick<
 >;
 type SortState = { key: SortKey; dir: "asc" | "desc" };
 
+// Keep: Planned (0) above Active (1) above Removed (2) — always.
+// Apply dir only to the secondary (column) comparison.
 const sortBy = (rows: CapsuleRow[], { key, dir }: SortState) => {
-  const r = [...rows].sort((a, b) => {
-    // 1. Compare by status rank first
+  const toKey = (v: any) => (v == null ? "" : v); // null-safe
+
+  return [...rows].sort((a, b) => {
+    // 1) Status bucket first (fixed ascending so Planned is always on top)
     const sa = statusRank(a);
     const sb = statusRank(b);
     if (sa !== sb) return sa - sb;
 
-    // 2. If same status, compare by chosen column
-    const av = (a[key] ?? "") as string | number;
-    const bv = (b[key] ?? "") as string | number;
-    if (av === bv) return 0;
-    return av > bv ? 1 : -1;
-  });
+    // 2) Within the same status, compare selected column with dir
+    const av = toKey(a[key] as any);
+    const bv = toKey(b[key] as any);
 
-  return dir === "asc" ? r : r.reverse();
+    // ISO dates compare correctly as strings; numbers do too; others lexicographically
+    let cmp = 0;
+    if (av < bv) cmp = -1;
+    else if (av > bv) cmp = 1;
+
+    return dir === "asc" ? cmp : -cmp;
+  });
 };
 
 export default function CS2CapsuleTracker() {
