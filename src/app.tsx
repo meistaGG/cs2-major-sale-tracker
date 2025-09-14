@@ -369,7 +369,7 @@ export default function CS2CapsuleTracker() {
     }
   }, []);
 
-  export default function ChartSection({
+  function ChartSection({
     chartData,
     avgAvail,
     avgSale,
