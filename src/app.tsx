@@ -30,7 +30,7 @@ export type CapsuleRow = {
 
 const INITIAL_ROWS: CapsuleRow[] = [
   // === Older CS:GO Majors ===
-    {
+  {
     id: "katowice-2014",
     major: "EMS One Katowice 2014",
     city: "Katowice",
@@ -296,8 +296,21 @@ const statusFor = (row: CapsuleRow) => {
   if (removed && today > removed)
     return { label: "Removed", tone: "bg-red-100 text-red-700" };
   if (intro && today >= intro && (!removed || today <= removed))
-    return { label: "Active", tone: "bg-green-100 text-green-700 shadow-[0_0_6px_rgba(34,197,94,0.6)] animate-pulse" };
+    return {
+      label: "Active",
+      tone: "bg-green-100 text-green-700 shadow-[0_0_6px_rgba(34,197,94,0.6)] animate-pulse",
+    };
   return { label: "Planned", tone: "bg-blue-100 text-blue-700" };
+};
+
+const statusRank = (row: CapsuleRow) => {
+  const today = new Date();
+  const intro = row.introduced ? new Date(row.introduced + "T00:00:00") : null;
+  const removed = row.removed ? new Date(row.removed + "T00:00:00") : null;
+
+  if (intro && today < intro) return 0; // Planned
+  if (intro && (!removed || today <= removed)) return 1; // Active
+  return 2; // Removed
 };
 
 // (Optional) label component (kept if you switch back to inline labels later)
@@ -342,11 +355,18 @@ type SortState = { key: SortKey; dir: "asc" | "desc" };
 
 const sortBy = (rows: CapsuleRow[], { key, dir }: SortState) => {
   const r = [...rows].sort((a, b) => {
+    // 1. Compare by status rank first
+    const sa = statusRank(a);
+    const sb = statusRank(b);
+    if (sa !== sb) return sa - sb;
+
+    // 2. If same status, compare by chosen column
     const av = (a[key] ?? "") as string | number;
     const bv = (b[key] ?? "") as string | number;
     if (av === bv) return 0;
     return av > bv ? 1 : -1;
   });
+
   return dir === "asc" ? r : r.reverse();
 };
 
@@ -587,7 +607,7 @@ export default function CS2CapsuleTracker() {
         <h2 className="text-2xl font-bold text-stone-800 mb-4">
           📊 Duration Overview
         </h2>
-        
+
         <div className="relative">
           {/* Overlay with the 4 averages (never clipped, never overlaps) */}
           <div className="absolute right-2 top-2 z-10 text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
