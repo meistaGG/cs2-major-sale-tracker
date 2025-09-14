@@ -30,6 +30,106 @@ export type CapsuleRow = {
 
 const INITIAL_ROWS: CapsuleRow[] = [
   // === Older CS:GO Majors ===
+    {
+    id: "katowice-2014",
+    major: "EMS One Katowice 2014",
+    city: "Katowice",
+    year: 2014,
+    introduced: "2014-03-06",
+    saleDate: "2014-03-15",
+    removed: "2014-03-17",
+    winner: "🏆 Virtus.pro",
+  },
+  {
+    id: "cologne-2014",
+    major: "ESL One Cologne 2014",
+    city: "Cologne",
+    year: 2014,
+    introduced: "2014-08-04",
+    saleDate: "2014-08-17",
+    removed: "2014-08-19",
+    winner: "🏆 Ninjas in Pyjamas",
+  },
+  {
+    id: "jonkoping-2014",
+    major: "DreamHack Winter 2014",
+    city: "Jonkoping",
+    year: 2014,
+    introduced: "2014-11-21",
+    saleDate: "2014-11-29",
+    removed: "2014-12-02",
+    winner: "🏆 Team LDLC.com",
+  },
+  {
+    id: "katowice-2015",
+    major: "ESL One Katowice 2015",
+    city: "Katowice",
+    year: 2015,
+    introduced: "2015-02-26",
+    saleDate: "2015-03-15",
+    removed: "2015-03-16",
+    winner: "🏆 Fnatic",
+  },
+  {
+    id: "cologne-2015",
+    major: "ESL One Cologne 2015",
+    city: "Cologne",
+    year: 2015,
+    introduced: "2015-08-14",
+    saleDate: "2015-08-23",
+    removed: "2015-08-24",
+    winner: "🏆 Fnatic",
+  },
+  {
+    id: "cluj-2015",
+    major: "DreamHack Cluj-Napoca 2015",
+    city: "Cluj-Napoca",
+    year: 2015,
+    introduced: "2015-10-20",
+    saleDate: "2015-11-01",
+    removed: "2015-11-04",
+    winner: "🏆 Team EnVyUs",
+  },
+  {
+    id: "columbus-2016",
+    major: "MLG Columbus 2016",
+    city: "Columbus",
+    year: 2016,
+    introduced: "2016-03-17",
+    saleDate: "2016-04-03",
+    removed: "2016-04-04",
+    winner: "🏆 Luminosity",
+  },
+  {
+    id: "cologne-2016",
+    major: "ESL One Cologne 2016",
+    city: "Cologne",
+    year: 2016,
+    introduced: "2016-06-24",
+    saleDate: "2016-07-10",
+    removed: "2016-07-12",
+    winner: "🏆 SK Gaming",
+  },
+  {
+    id: "atlanta-2017",
+    major: "ELEAGUE Atlanta 2017",
+    city: "Atlanta",
+    year: 2017,
+    introduced: "2017-01-12",
+    saleDate: "2017-01-29",
+    removed: "2017-01-31",
+    winner: "🏆 Astralis",
+  },
+  {
+    id: "krakow-2017",
+    major: "PGL Krakow 2017",
+    city: "Krakow",
+    year: 2017,
+    introduced: "2017-07-07",
+    saleDate: "2017-07-23",
+    removed: "2017-07-25",
+    winner: "🏆 Gambit Esports",
+  },
   {
     id: "boston-2018",
     major: "ELEAGUE Boston 2018",
@@ -89,7 +189,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2021-10-21",
     saleDate: "2021-11-30",
     removed: "2022-01-18",
-    winner: "🏆 NAVI",
+    winner: "🏆 Natus Vincere",
   },
   {
     id: "antwerp-2022",
@@ -130,7 +230,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2024-03-21",
     saleDate: "2024-04-26",
     removed: "2024-08-20",
-    winner: "🏆 NAVI",
+    winner: "🏆 Natus Vincere",
   },
   {
     id: "shanghai-2024",
@@ -382,8 +482,12 @@ export default function CS2CapsuleTracker() {
                 Removed <ArrowUpDown className="w-3 h-3" />
               </div>
             </th>
-            <th className="text-left py-3 pl-4 pr-4">Availability (intro → removal)</th>
-            <th className="text-left py-3 pl-4 pr-4">Duration (sale → removal)</th>
+            <th className="text-left py-3 pl-4 pr-4">
+              Availability (intro → removal)
+            </th>
+            <th className="text-left py-3 pl-4 pr-4">
+              Duration (sale → removal)
+            </th>
             <th className="text-left py-3 pl-4 pr-4">Champion</th>
             <th className="text-left py-3 pl-4 pr-4">Status</th>
           </tr>
@@ -648,9 +752,9 @@ export default function CS2CapsuleTracker() {
             </div>
 
             <p className="mt-3 text-xs text-stone-500">
-              ⓘ Data is curated from blog posts and community reporting.
-              Some dates may be inaccurate. Please contact @.meista on Discord
-              to report corrections.
+              ⓘ Data is curated from blog posts and community reporting. Some
+              dates may be inaccurate. Please contact @.meista on Discord to
+              report corrections.
             </p>
           </CardContent>
         </Card>
