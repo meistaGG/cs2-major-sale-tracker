@@ -197,13 +197,13 @@ const statusFor = (row: CapsuleRow) => {
   const intro = row.introduced ? new Date(row.introduced + "T00:00:00") : null;
   const removed = row.removed ? new Date(row.removed + "T00:00:00") : null;
   if (removed && today > removed)
-    return { label: "Removed", tone: "bg-red-100 text-red-800" };
+    return { label: "Removed", tone: "bg-red-100 text-red-700" };
   if (intro && today >= intro && (!removed || today <= removed))
-    return { label: "Active", tone: "bg-green-100 text-green-800" };
-  return { label: "Planned", tone: "bg-blue-100 text-blue-900" };
+    return { label: "Active", tone: "bg-green-100 text-green-700" };
+  return { label: "Planned", tone: "bg-blue-100 text-blue-700" };
 };
 
-// (Optional) label component retained if you want to switch back to inline labels later
+// (Optional) label component (kept if you switch back to inline labels later)
 const RightMultiLineLabel: React.FC<{
   viewBox?: { x: number; y: number; width: number; height: number };
   lines: string[];
@@ -358,7 +358,121 @@ export default function CS2CapsuleTracker() {
     }
   }, []);
 
-  // --- Local Chart component --------------------------------------------------
+  // --- Table component (inside same card as controls) ------------------------
+  function TableSection({
+    rows,
+    onSort,
+  }: {
+    rows: CapsuleRow[];
+    onSort: (k: SortKey) => void;
+  }) {
+    return (
+      <table className="min-w-full text-sm">
+        <thead className="bg-stone-50 text-stone-600">
+          <tr>
+            <th className="text-left py-3 pl-4 pr-4">Major / City</th>
+            <th
+              className="py-3 pr-4 cursor-pointer"
+              onClick={() => onSort("introduced")}
+            >
+              <div className="inline-flex items-center gap-1">
+                Introduced <ArrowUpDown className="w-3 h-3" />
+              </div>
+            </th>
+            <th
+              className="py-3 pr-4 cursor-pointer"
+              onClick={() => onSort("saleDate")}
+            >
+              <div className="inline-flex items-center gap-1">
+                Sale <ArrowUpDown className="w-3 h-3" />
+              </div>
+            </th>
+            <th
+              className="py-3 pr-4 cursor-pointer"
+              onClick={() => onSort("removed")}
+            >
+              <div className="inline-flex items-center gap-1">
+                Removed <ArrowUpDown className="w-3 h-3" />
+              </div>
+            </th>
+            <th className="py-3 pr-4">Availability (intro → removal)</th>
+            <th className="py-3 pr-4">Duration (sale → removal)</th>
+            <th className="py-3 pr-4">Champion</th>
+            <th className="py-3 pr-4">Status</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-stone-100">
+          {rows.map((r) => {
+            const avail = availabilityDays(r);
+            const saleDur = diffDays(r.saleDate, r.removed);
+            const status = statusFor(r);
+            return (
+              <tr key={r.id} className="align-top">
+                {/* Tournament cell with logo + name + city/year */}
+                <td className="py-3 pl-4 pr-4">
+                  <div className="flex items-start gap-3">
+                    {r.logo ? (
+                      <img
+                        src={r.logo}
+                        alt={r.major}
+                        className="w-6 h-6 rounded-sm object-contain mt-[2px]"
+                      />
+                    ) : (
+                      <div className="w-6 h-6 rounded-sm bg-stone-200 mt-[2px]" />
+                    )}
+                    <div>
+                      <div className="font-semibold text-stone-800 leading-5">
+                        {r.major}
+                      </div>
+                      <div className="text-stone-500 text-xs leading-4">
+                        {r.city} · {r.year}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                {/* Dates */}
+                <td className="py-3 pr-4 whitespace-nowrap">
+                  {fmt(r.introduced)}
+                </td>
+                <td className="py-3 pr-4 whitespace-nowrap">
+                  {fmt(r.saleDate)}
+                </td>
+                <td className="py-3 pr-4 whitespace-nowrap text-red-600 font-semibold">
+                  {fmt(r.removed)}
+                </td>
+
+                {/* Durations */}
+                <td className="py-3 pr-4 font-medium text-stone-800">
+                  {avail !== null
+                    ? `${avail} days${r.removed ? "" : " (so far)"}`
+                    : "—"}
+                </td>
+                <td className="py-3 pr-4 font-medium text-stone-800">
+                  {saleDur !== null ? `${saleDur} days` : "—"}
+                </td>
+
+                {/* Winner */}
+                <td className="py-3 pr-4">{r.winner || "—"}</td>
+
+                {/* Status pill */}
+                <td className="py-3 pr-4">
+                  <span
+                    className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium ${status.tone}`}
+                  >
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-current" />
+                    {status.label}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    );
+  }
+
+  // --- Chart component (after table) -----------------------------------------
   function ChartSection({
     chartData,
     avgAvail,
@@ -485,118 +599,6 @@ export default function CS2CapsuleTracker() {
     );
   }
 
-  // --- Table component --------------------------------------------------------
-  function TableSection({
-    rows,
-    onSort,
-  }: {
-    rows: CapsuleRow[];
-    onSort: (k: SortKey) => void;
-  }) {
-    return (
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold text-stone-800 mb-4">
-          🗂️ Capsule Timeline
-        </h2>
-
-        <Card className="border-stone-200 shadow-sm">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-stone-50 text-stone-600">
-                  <tr>
-                    <th className="text-left py-3 pl-4 pr-4">Tournament</th>
-                    <th
-                      className="py-3 pr-4 cursor-pointer"
-                      onClick={() => onSort("introduced")}
-                    >
-                      <div className="inline-flex items-center gap-1">
-                        Introduced <ArrowUpDown className="w-3 h-3" />
-                      </div>
-                    </th>
-                    <th
-                      className="py-3 pr-4 cursor-pointer"
-                      onClick={() => onSort("saleDate")}
-                    >
-                      <div className="inline-flex items-center gap-1">
-                        Sale <ArrowUpDown className="w-3 h-3" />
-                      </div>
-                    </th>
-                    <th
-                      className="py-3 pr-4 cursor-pointer"
-                      onClick={() => onSort("removed")}
-                    >
-                      <div className="inline-flex items-center gap-1">
-                        Removed <ArrowUpDown className="w-3 h-3" />
-                      </div>
-                    </th>
-                    <th className="py-3 pr-4">Avail. (days)</th>
-                    <th className="py-3 pr-4">Sale → Removal (days)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-100">
-                  {rows.map((r) => {
-                    const avail = availabilityDays(r);
-                    const saleDur = diffDays(r.saleDate, r.removed);
-                    return (
-                      <tr key={r.id} className="align-top">
-                        {/* Tournament cell with logo + name + winner */}
-                        <td className="py-3 pl-4 pr-4">
-                          <div className="flex items-start gap-3">
-                            {r.logo ? (
-                              <img
-                                src={r.logo}
-                                alt={r.major}
-                                className="w-6 h-6 rounded-sm object-contain mt-[2px]"
-                              />
-                            ) : (
-                              <div className="w-6 h-6 rounded-sm bg-stone-200 mt-[2px]" />
-                            )}
-                            <div>
-                              <div className="font-semibold text-stone-800 leading-5">
-                                {r.major}
-                              </div>
-                              <div className="text-stone-500 text-xs leading-4 flex items-center gap-1">
-                                <CalendarDays className="w-3 h-3" /> {r.city} ·{" "}
-                                {r.year}
-                                {r.winner ? (
-                                  <span className="ml-2">{r.winner}</span>
-                                ) : null}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Dates */}
-                        <td className="py-3 pr-4 whitespace-nowrap">
-                          {fmt(r.introduced)}
-                        </td>
-                        <td className="py-3 pr-4 whitespace-nowrap">
-                          {fmt(r.saleDate)}
-                        </td>
-                        <td className="py-3 pr-4 whitespace-nowrap text-red-600 font-semibold">
-                          {fmt(r.removed)}
-                        </td>
-
-                        {/* Durations */}
-                        <td className="py-3 pr-4 font-medium text-stone-800">
-                          {avail ?? "—"}
-                        </td>
-                        <td className="py-3 pr-4 font-medium text-stone-800">
-                          {saleDur ?? "—"}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   // --- Page -------------------------------------------------------------------
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-10 text-stone-900">
@@ -606,17 +608,22 @@ export default function CS2CapsuleTracker() {
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl font-extrabold tracking-tight text-stone-800"
         >
-          🎯 CS Major Capsule Chronicle
+          🎯 CS Major Capsule Tracking
         </motion.h1>
         <p className="mt-3 text-stone-600 max-w-3xl text-lg">
-          Follow each Major’s{" "}
-          <span className="font-semibold">sticker capsule</span>: when it
-          arrived, when the sale began, and when it was removed.
+          Follow the journey of each Major’s{" "}
+          <span className="font-semibold">sticker capsule</span>: when it{" "}
+          <span className="text-green-600 font-medium">released</span>, when the{" "}
+          <span className="text-indigo-600 font-medium">sale</span> began, and{" "}
+          when it was finally{" "}
+          <span className="text-red-600 font-medium">removed</span> from the
+          in-game store.
         </p>
 
-        {/* Simple search/filter header preserved */}
+        {/* Search + filters + TABLE together in one card (like your screenshot) */}
         <Card className="mt-6 border-stone-200 shadow-sm">
           <CardContent className="p-4 md:p-6">
+            {/* Controls */}
             <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
               <div className="flex flex-1 items-center gap-2">
                 <Search className="w-4 h-4 text-stone-500" />
@@ -653,10 +660,18 @@ export default function CS2CapsuleTracker() {
                 </Button>
               </div>
             </div>
+
+            {/* Divider */}
+            <div className="h-px bg-stone-200 my-4" />
+
+            {/* Table inside the same card */}
+            <div className="overflow-x-auto">
+              <TableSection rows={filtered} onSort={toggleSort} />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Chart section */}
+        {/* Chart section (after table) */}
         <ChartSection
           chartData={chartData}
           avgAvail={avgAvail}
@@ -664,9 +679,6 @@ export default function CS2CapsuleTracker() {
           avgAvail5={avgAvail5}
           avgSale5={avgSale5}
         />
-
-        {/* Table section */}
-        <TableSection rows={filtered} onSort={toggleSort} />
       </div>
     </div>
   );
