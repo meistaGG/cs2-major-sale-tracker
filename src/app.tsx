@@ -252,6 +252,16 @@ const INITIAL_ROWS: CapsuleRow[] = [
     removed: null,
     winner: "🏆 Vitality",
   },
+  {
+    id: "budapest-2025",
+    major: "StarLadder Budapest 2025",
+    city: "Budapest",
+    year: 2025,
+    introduced: null,
+    saleDate: null,
+    removed: null,
+    winner: null,
+  },
 ];
 
 // --- Helpers -----------------------------------------------------------------
