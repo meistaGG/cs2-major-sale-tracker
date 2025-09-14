@@ -512,70 +512,74 @@ export default function CS2CapsuleTracker() {
           <h2 className="text-2xl font-bold text-stone-800 mb-4">
             📊 Duration Overview
           </h2>
-          <ResponsiveContainer width="100%" height={360}>
-            <BarChart
-              data={chartData}
-              margin={{ top: 50, right: 200, left: 0, bottom: 20 }} // more space on the right for labels
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="major"
-                tick={{ fontSize: 12 }}
-                interval={0}
-                angle={-20}
-                textAnchor="end"
-                height={60} // more room for long names
-              />
-              <YAxis />
-              <Tooltip />
-              <Legend
-                verticalAlign="top"
-                align="left"
-                height={32} // reserves space so it won't overlap
-                wrapperStyle={{ paddingBottom: 8 }}
-              />
-
-              {/* Availability first, then Sale Duration */}
-              <Bar
-                dataKey="availability"
-                name="Intro → Removal"
-                fill="#10b981"
-                radius={[6, 6, 0, 0]}
-              />
-              <Bar
-                dataKey="saleDuration"
-                name="Sale → Removal"
-                fill="#6366f1"
-                radius={[6, 6, 0, 0]}
-              />
-
-              {/* Multi-line, high-contrast average labels on the right */}
-              <ReferenceLine
-                ifOverflow="extendDomain"
-                y={avgAvail}
-                stroke="#10b981"
-                strokeDasharray="5 5"
-                label={
-                  <RightMultiLineLabel
-                    lines={["Average", `avail: ${avgAvail.toFixed(0)}d`]}
-                    color="#111827"
+          <div className="overflow-x-auto">
+            <div style={{ width: 1000 }}>
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 50, right: 200, left: 0, bottom: 20 }} // more space on the right for labels
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="major"
+                    tick={{ fontSize: 12 }}
+                    interval={0}
+                    angle={-20}
+                    textAnchor="end"
+                    height={60} // more room for long names
                   />
-                }
-              />
-              <ReferenceLine
-                ifOverflow="extendDomain"
-                y={avgSale}
-                stroke="#6366f1"
-                strokeDasharray="5 5"
-                label={
-                  <RightMultiLineLabel
-                    lines={["Average", `sale: ${avgSale.toFixed(0)}d`]}
-                    color="#111827"
+                  <YAxis />
+                  <Tooltip />
+                  <Legend
+                    verticalAlign="top"
+                    align="left"
+                    height={32} // reserves space so it won't overlap
+                    wrapperStyle={{ paddingBottom: 8 }}
                   />
-                }
-              />
-            </BarChart>
-          </ResponsiveContainer>
+
+                  {/* Availability first, then Sale Duration */}
+                  <Bar
+                    dataKey="availability"
+                    name="Intro → Removal"
+                    fill="#10b981"
+                    radius={[6, 6, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="saleDuration"
+                    name="Sale → Removal"
+                    fill="#6366f1"
+                    radius={[6, 6, 0, 0]}
+                  />
+
+                  {/* Multi-line, high-contrast average labels on the right */}
+                  <ReferenceLine
+                    ifOverflow="extendDomain"
+                    y={avgAvail}
+                    stroke="#10b981"
+                    strokeDasharray="5 5"
+                    label={
+                      <RightMultiLineLabel
+                        lines={["Average", `avail: ${avgAvail.toFixed(0)}d`]}
+                        color="#111827"
+                      />
+                    }
+                  />
+                  <ReferenceLine
+                    ifOverflow="extendDomain"
+                    y={avgSale}
+                    stroke="#6366f1"
+                    strokeDasharray="5 5"
+                    label={
+                      <RightMultiLineLabel
+                        lines={["Average", `sale: ${avgSale.toFixed(0)}d`]}
+                        color="#111827"
+                      />
+                    }
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
     </div>
