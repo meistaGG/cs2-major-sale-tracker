@@ -260,7 +260,7 @@ export default function CS2CapsuleTracker() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-stone-50 to-stone-100 text-stone-900">
-      <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-10">
+      <div className="w-full px-2 sm:px-4 lg:px-6 py-10">
         <motion.h1
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
