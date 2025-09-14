@@ -286,7 +286,7 @@ const statusFor = (row: CapsuleRow) => {
   if (removed && today > removed)
     return { label: "Removed", tone: "bg-red-100 text-red-700" };
   if (intro && today >= intro && (!removed || today <= removed))
-    return { label: "Active", tone: "bg-green-100 text-green-700" };
+    return { label: "Active", tone: "bg-green-100 text-green-700 shadow-[0_0_6px_rgba(34,197,94,0.6)] animate-pulse" };
   return { label: "Planned", tone: "bg-blue-100 text-blue-700" };
 };
 
@@ -486,7 +486,7 @@ export default function CS2CapsuleTracker() {
               Availability (intro → removal)
             </th>
             <th className="text-left py-3 pl-4 pr-4">
-              Duration (sale → removal)
+              Sale Duration (sale → removal)
             </th>
             <th className="text-left py-3 pl-4 pr-4">Champion</th>
             <th className="text-left py-3 pl-4 pr-4">Status</th>
@@ -577,7 +577,7 @@ export default function CS2CapsuleTracker() {
         <h2 className="text-2xl font-bold text-stone-800 mb-4">
           📊 Duration Overview
         </h2>
-
+        
         <div className="relative">
           {/* Overlay with the 4 averages (never clipped, never overlaps) */}
           <div className="absolute right-2 top-2 z-10 text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
