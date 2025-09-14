@@ -398,15 +398,6 @@ export default function CS2CapsuleTracker() {
                 {/* Tournament cell with logo + name + city/year */}
                 <td className="py-3 pl-4 pr-4">
                   <div className="flex items-start gap-3">
-                    {r.logo ? (
-                      <img
-                        src={r.logo}
-                        alt={r.major}
-                        className="w-6 h-6 rounded-sm object-contain mt-[2px]"
-                      />
-                    ) : (
-                      <div className="w-6 h-6 rounded-sm bg-stone-200 mt-[2px]" />
-                    )}
                     <div>
                       <div className="font-semibold text-stone-800 leading-5">
                         {r.major}
