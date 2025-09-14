@@ -262,6 +262,16 @@ const INITIAL_ROWS: CapsuleRow[] = [
     removed: null,
     winner: null,
   },
+  {
+    id: "cologne-2026",
+    major: "IEM Cologne 2026",
+    city: "Cologne",
+    year: 2026,
+    introduced: null,
+    saleDate: null,
+    removed: null,
+    winner: null,
+  },
 ];
 
 // --- Helpers -----------------------------------------------------------------
@@ -800,9 +810,8 @@ export default function CS2CapsuleTracker() {
             </div>
 
             <p className="mt-3 text-xs text-stone-500">
-              ⓘ Data is curated from blog posts and community reporting. Some
-              dates may be inaccurate. Please contact @.meista on Discord to
-              report corrections.
+              ⓘ Data is curated from Liquipedia, CSGOSKINS.GG and HLTV. Some
+              dates may be inaccurate.
             </p>
           </CardContent>
         </Card>
