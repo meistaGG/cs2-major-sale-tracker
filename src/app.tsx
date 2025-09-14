@@ -26,7 +26,6 @@ export type CapsuleRow = {
   saleDate: string | null; // "Sale" wording only in UI
   removed: string | null;
   winner?: string | null; // e.g. "🏆 Vitality"
-  logo?: string | null; // optional tournament logo url (24px-ish)
 };
 
 const INITIAL_ROWS: CapsuleRow[] = [
@@ -40,7 +39,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2018-01-26",
     removed: "2018-01-30",
     winner: "🏆 Cloud9",
-    logo: "/logos/boston-2018.png",
   },
   {
     id: "london-2018",
@@ -51,7 +49,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2018-09-22",
     removed: "2018-09-26",
     winner: "🏆 Astralis",
-    logo: "/logos/london-2018.png",
   },
   {
     id: "katowice-2019",
@@ -62,7 +59,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2019-03-02",
     removed: "2019-03-11",
     winner: "🏆 Astralis",
-    logo: "/logos/katowice-2019.png",
   },
   {
     id: "berlin-2019",
@@ -73,7 +69,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2019-09-07",
     removed: "2019-09-26",
     winner: "🏆 Astralis",
-    logo: "/logos/berlin-2019.png",
   },
   {
     id: "RMR-2020",
@@ -84,7 +79,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2021-04-06",
     removed: "2021-05-21",
     winner: null,
-    logo: "/logos/RMR-2020.png",
   },
   // === CS:GO (late) ===
   {
@@ -96,7 +90,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2021-11-30",
     removed: "2022-01-18",
     winner: "🏆 NAVI",
-    logo: "/logos/stockholm-2021.png",
   },
   {
     id: "antwerp-2022",
@@ -107,7 +100,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2022-06-03",
     removed: "2022-08-09",
     winner: "🏆 FaZe Clan",
-    logo: "/logos/antwerp-2022.png",
   },
   {
     id: "rio-2022",
@@ -118,7 +110,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2022-12-14",
     removed: "2023-02-20",
     winner: "🏆 Outsiders",
-    logo: "/logos/rio-2022.png",
   },
   {
     id: "paris-2023",
@@ -129,7 +120,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2023-06-23",
     removed: "2023-10-07",
     winner: "🏆 Vitality",
-    logo: "/logos/paris-2023.png",
   },
   // === CS2 era ===
   {
@@ -141,7 +131,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2024-04-26",
     removed: "2024-08-20",
     winner: "🏆 NAVI",
-    logo: "/logos/copenhagen-2024.png",
   },
   {
     id: "shanghai-2024",
@@ -152,7 +141,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2025-01-14",
     removed: "2025-04-21",
     winner: "🏆 Spirit",
-    logo: "/logos/shanghai-2024.png",
   },
   {
     id: "austin-2025",
@@ -163,7 +151,6 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: "2025-08-14",
     removed: null,
     winner: "🏆 Vitality",
-    logo: "/logos/austin-2025.png",
   },
 ];
 
