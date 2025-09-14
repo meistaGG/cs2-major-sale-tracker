@@ -208,10 +208,12 @@ const RightMultiLineLabel: React.FC<{
   viewBox?: { x: number; y: number; width: number; height: number };
   lines: string[];
   color?: string;
-}> = ({ viewBox, lines, color = "#111827" }) => {
+  /** extra vertical offset in pixels */
+  dy?: number;
+}> = ({ viewBox, lines, color = "#111827", dy = 0 }) => {
   if (!viewBox) return null as any;
-  const x = viewBox.x + viewBox.width + 8; // a bit to the right of the chart area
-  const y = viewBox.y;
+  const x = viewBox.x + viewBox.width + 8; // right of plot
+  const y = viewBox.y + dy; // nudge vertically
   return (
     <text x={x} y={y} fill={color} fontSize={12} fontWeight={700}>
       {lines.map((line, i) => (
@@ -540,7 +542,7 @@ export default function CS2CapsuleTracker() {
               <ResponsiveContainer width="100%" height={360}>
                 <BarChart
                   data={chartData}
-                  margin={{ top: 50, right: 180, left: 0, bottom: 20 }} // more space on the right for labels
+                  margin={{ top: 50, right: 200, left: 0, bottom: 20 }} // more space on the right for labels
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
@@ -593,6 +595,7 @@ export default function CS2CapsuleTracker() {
                           `avail: ${avgAvail.toFixed(0)} days`,
                         ]}
                         color="#111827"
+                        dy={-36}
                       />
                     }
                   />
@@ -605,6 +608,7 @@ export default function CS2CapsuleTracker() {
                       <RightMultiLineLabel
                         lines={["Average", `sale: ${avgSale.toFixed(0)} days`]}
                         color="#111827"
+                        dy={-6}
                       />
                     }
                   />
@@ -617,10 +621,11 @@ export default function CS2CapsuleTracker() {
                     label={
                       <RightMultiLineLabel
                         lines={[
-                          "Avg (last 5)",
+                          "Avg (last 5 Majors)",
                           `avail: ${avgAvail5.toFixed(0)} days`,
                         ]}
                         color="#0ea5e9"
+                        dy={+24}
                       />
                     }
                   />
@@ -633,10 +638,11 @@ export default function CS2CapsuleTracker() {
                     label={
                       <RightMultiLineLabel
                         lines={[
-                          "Avg (last 5)",
+                          "Avg (last 5 Majors)",
                           `sale: ${avgSale5.toFixed(0)} days`,
                         ]}
                         color="#7c3aed"
+                        dy={+54}
                       />
                     }
                   />
