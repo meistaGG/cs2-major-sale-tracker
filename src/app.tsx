@@ -75,6 +75,17 @@ const INITIAL_ROWS: CapsuleRow[] = [
     winner: "🏆 Astralis",
     logo: "/logos/berlin-2019.png",
   },
+  {
+    id: "RMR-2020",
+    major: "Regional Major Rankings 2020",
+    city: null,
+    year: 2020,
+    introduced: "2021-01-27",
+    saleDate: "2021-04-06",
+    removed: "2021-05-21",
+    winner: null,
+    logo: "/logos/RMR-2020.png",
+  },
   // === CS:GO (late) ===
   {
     id: "stockholm-2021",
@@ -82,8 +93,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     city: "Stockholm",
     year: 2021,
     introduced: "2021-10-21",
-    saleDate: "2021-11-11",
-    removed: "2022-05-09",
+    saleDate: "2021-11-30",
+    removed: "2022-01-18",
     winner: "🏆 NAVI",
     logo: "/logos/stockholm-2021.png",
   },
@@ -93,8 +104,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     city: "Antwerp",
     year: 2022,
     introduced: "2022-05-04",
-    saleDate: "2022-05-23",
-    removed: "2022-08-08",
+    saleDate: "2022-06-03",
+    removed: "2022-08-09",
     winner: "🏆 FaZe Clan",
     logo: "/logos/antwerp-2022.png",
   },
@@ -104,8 +115,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     city: "Rio de Janeiro",
     year: 2022,
     introduced: "2022-10-21",
-    saleDate: "2022-11-15",
-    removed: "2023-02-07",
+    saleDate: "2022-12-14",
+    removed: "2023-02-20",
     winner: "🏆 Outsiders",
     logo: "/logos/rio-2022.png",
   },
@@ -129,7 +140,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2024-03-21",
     saleDate: "2024-04-26",
     removed: "2024-08-20",
-    winner: "🏆 Team Spirit",
+    winner: "🏆 NAVI",
     logo: "/logos/copenhagen-2024.png",
   },
   {
@@ -140,7 +151,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2024-11-27",
     saleDate: "2025-01-14",
     removed: "2025-04-21",
-    winner: "🏆 MOUZ",
+    winner: "🏆 Spirit",
     logo: "/logos/shanghai-2024.png",
   },
   {
@@ -151,7 +162,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2025-05-22",
     saleDate: "2025-08-14",
     removed: null,
-    winner: null,
+    winner: "🏆 Vitality",
     logo: "/logos/austin-2025.png",
   },
 ];
@@ -409,7 +420,7 @@ export default function CS2CapsuleTracker() {
                       Availability (intro → removal)
                     </th>
                     <th className="py-2 pr-4">Duration (sale → removal)</th>
-                    <th className="py-2 pr-4">Winner</th>
+                    <th className="py-2 pr-4">Champion</th>
                     <th className="py-2">Status</th>
                   </tr>
                 </thead>
