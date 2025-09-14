@@ -816,6 +816,10 @@ export default function CS2CapsuleTracker() {
           avgSale5={avgSale5}
         />
       </div>
+      {/* Footer */}
+      <footer className="mt-12 py-6 text-center text-sm text-stone-500">
+        made with <span className="text-red-500">♥</span> by meista
+      </footer>
     </div>
   );
 }
