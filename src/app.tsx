@@ -270,8 +270,8 @@ export default function CS2CapsuleTracker() {
         </motion.h1>
         <p className="mt-3 text-stone-600 max-w-3xl text-lg">
           Follow the journey of each Major’s <span className="font-semibold">sticker capsule</span>: when it
-          <span className="text-blue-700"> released</span>, when the <span className="text-amber-700">sale</span> began, and when it was
-          <span className="text-red-700"> removed</span> from the in‑game store.
+          <span className="text-green-700"> released</span>, when the <span className="text-blue-700">sale</span> began, and when it was
+          <span className="text-red-700"> finally removed</span> from the in‑game store.
         </p>
 
         <Card className="mt-8 border-stone-200 shadow-sm">
