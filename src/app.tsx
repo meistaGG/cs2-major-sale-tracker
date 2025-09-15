@@ -639,7 +639,7 @@ export default function CS2CapsuleTracker() {
 
         <div className="relative">
           {/* Overlay with the 4 averages (never clipped, never overlaps) */}
-          <div className="absolute right-2 top-2 z-10 text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
+          <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
             <div style={{ color: "#10b981", fontWeight: 700 }}>Average</div>
             <div style={{ color: "#10b981" }}>
               avail: {avgAvail.toFixed(0)} days
@@ -687,6 +687,7 @@ export default function CS2CapsuleTracker() {
                   <Tooltip
                     formatter={(v: any, n: string) => [v ?? "—", n]}
                     labelFormatter={(l) => `${l}`}
+                    wrapperStyle={{ zIndex: 50 }} 
                   />
                   <Legend
                     verticalAlign="top"
