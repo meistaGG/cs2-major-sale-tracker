@@ -15,6 +15,8 @@ import {
   ReferenceLine,
   ResponsiveContainer,
   Legend,
+  LineChart,
+  Line,
 } from "recharts";
 
 // --- Data model --------------------------------------------------------------
@@ -740,6 +742,114 @@ export default function CS2CapsuleTracker() {
     );
   }
 
+  function LineChartsSection({
+    chartData,
+  }: {
+    chartData: Array<{
+      major: string;
+      availability: number;
+      saleDuration: number;
+    }>;
+  }) {
+    return (
+      <div className="mt-10 space-y-10">
+        {/* Availability line */}
+        <div>
+          <h2 className="text-2xl font-bold text-stone-800 mb-4">
+            📈 Availability Over Time
+          </h2>
+          <div className="overflow-x-auto">
+            <div className="w-full min-w-[900px] lg:min-w-0">
+              <ResponsiveContainer width="100%" height={320}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 10, right: 24, left: 0, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="major"
+                    tick={{ fontSize: 12 }}
+                    interval={0}
+                    angle={-20}
+                    textAnchor="end"
+                    height={60}
+                  />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(v: any, n: string) => [v ?? "—", n]}
+                    labelFormatter={(l) => `${l}`}
+                  />
+                  <Legend
+                    verticalAlign="top"
+                    align="left"
+                    height={32}
+                    wrapperStyle={{ paddingBottom: 8 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="availability"
+                    name="Intro → Removal"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                    activeDot={{ r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Sale Duration line */}
+        <div>
+          <h2 className="text-2xl font-bold text-stone-800 mb-4">
+            📈 Sale Duration Over Time
+          </h2>
+          <div className="overflow-x-auto">
+            <div className="w-full min-w-[900px] lg:min-w-0">
+              <ResponsiveContainer width="100%" height={320}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 10, right: 24, left: 0, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="major"
+                    tick={{ fontSize: 12 }}
+                    interval={0}
+                    angle={-20}
+                    textAnchor="end"
+                    height={60}
+                  />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(v: any, n: string) => [v ?? "—", n]}
+                    labelFormatter={(l) => `${l}`}
+                  />
+                  <Legend
+                    verticalAlign="top"
+                    align="left"
+                    height={32}
+                    wrapperStyle={{ paddingBottom: 8 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="saleDuration"
+                    name="Sale → Removal"
+                    stroke="#6366f1"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                    activeDot={{ r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // --- Page -------------------------------------------------------------------
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-10 text-stone-900">
@@ -825,6 +935,7 @@ export default function CS2CapsuleTracker() {
           avgAvail5={avgAvail5}
           avgSale5={avgSale5}
         />
+        <LineChartsSection chartData={chartData} />
       </div>
       <footer className="mt-12 py-6 text-center text-sm text-stone-500">
         made with <span className="text-red-500">♥</span> for{" "}
