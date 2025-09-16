@@ -288,11 +288,12 @@ const fmt = (iso: string | null) =>
     : "—";
 
 const diffDays = (a: string | null, b: string | null) => {
-  if (!a || !b) return null;
-  const ms = Math.abs(
-    new Date(b + "T00:00:00").getTime() - new Date(a + "T00:00:00").getTime()
-  );
-  return Math.round(ms / 86400000);
+  if (!a) return null;
+  const endIso = b ?? new Date().toISOString().slice(0, 10);
+  const ms =
+    new Date(endIso + "T00:00:00").getTime() -
+    new Date(a + "T00:00:00").getTime();
+  return ms >= 0 ? Math.round(ms / 86400000) : null;
 };
 
 // Introduced → Removed (or today if still active)
@@ -592,7 +593,9 @@ export default function CS2CapsuleTracker() {
                     : "—"}
                 </td>
                 <td className="py-3 pl-4 pr-4 font-medium text-stone-800">
-                  {saleDur !== null ? `${saleDur} days` : "—"}
+                  {saleDur !== null
+                    ? `${saleDur} days${r.removed ? "" : " (so far)"}`
+                    : "—"}
                 </td>
 
                 {/* Winner */}
@@ -687,7 +690,7 @@ export default function CS2CapsuleTracker() {
                   <Tooltip
                     formatter={(v: any, n: string) => [v ?? "—", n]}
                     labelFormatter={(l) => `${l}`}
-                    wrapperStyle={{ zIndex: 50 }} 
+                    wrapperStyle={{ zIndex: 50 }}
                   />
                   <Legend
                     verticalAlign="top"
