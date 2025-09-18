@@ -780,7 +780,7 @@ export default function CS2CapsuleTracker() {
                 className="mt-1"
                 style={{ color: "#0ea5e9", fontWeight: 700 }}
               >
-                Avg (last 5)
+                Avg (last 5 Majors)
               </div>
               <div style={{ color: "#0ea5e9" }}>
                 avail: {avgAvail5.toFixed(0)} days
@@ -863,7 +863,7 @@ export default function CS2CapsuleTracker() {
                 className="mt-1"
                 style={{ color: "#7c3aed", fontWeight: 700 }}
               >
-                Avg (last 5)
+                Avg (last 5 Majors)
               </div>
               <div style={{ color: "#7c3aed" }}>
                 sale: {avgSale5.toFixed(0)} days
