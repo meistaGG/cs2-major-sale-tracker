@@ -748,6 +748,8 @@ export default function CS2CapsuleTracker() {
     chartData,
     avgAvail,
     avgSale,
+    avgAvail5,
+    avgSale5,
   }: {
     chartData: Array<{
       major: string;
@@ -756,6 +758,8 @@ export default function CS2CapsuleTracker() {
     }>;
     avgAvail: number;
     avgSale: number;
+    avgAvail5: number;
+    avgSale5: number;
   }) {
     return (
       <div className="mt-10 space-y-10">
@@ -766,11 +770,20 @@ export default function CS2CapsuleTracker() {
           </h2>
 
           <div className="relative">
-            {/* Average overlay (non-blocking, above chart; keep small) */}
+            {/* Overlay (non-interactive) */}
             <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
               <div style={{ color: "#10b981", fontWeight: 700 }}>Average</div>
               <div style={{ color: "#10b981" }}>
                 avail: {avgAvail.toFixed(0)} days
+              </div>
+              <div
+                className="mt-1"
+                style={{ color: "#0ea5e9", fontWeight: 700 }}
+              >
+                Avg (last 5)
+              </div>
+              <div style={{ color: "#0ea5e9" }}>
+                avail: {avgAvail5.toFixed(0)} days
               </div>
             </div>
 
@@ -779,7 +792,7 @@ export default function CS2CapsuleTracker() {
                 <ResponsiveContainer width="100%" height={320}>
                   <LineChart
                     data={chartData}
-                    margin={{ top: 40, right: 24, left: 0, bottom: 20 }}
+                    margin={{ top: 44, right: 24, left: 0, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
@@ -794,7 +807,7 @@ export default function CS2CapsuleTracker() {
                     <Tooltip
                       formatter={(v: any, n: string) => [v ?? "—", n]}
                       labelFormatter={(l) => `${l}`}
-                      wrapperStyle={{ zIndex: 50 }} // keep above overlay
+                      wrapperStyle={{ zIndex: 50 }}
                     />
                     <Legend
                       verticalAlign="top"
@@ -803,12 +816,18 @@ export default function CS2CapsuleTracker() {
                       wrapperStyle={{ paddingBottom: 8 }}
                     />
 
-                    {/* Average line */}
+                    {/* Average lines */}
                     <ReferenceLine
                       ifOverflow="extendDomain"
                       y={avgAvail}
                       stroke="#10b981"
                       strokeDasharray="5 5"
+                    />
+                    <ReferenceLine
+                      ifOverflow="extendDomain"
+                      y={avgAvail5}
+                      stroke="#0ea5e9"
+                      strokeDasharray="3 3"
                     />
 
                     <Line
@@ -834,11 +853,20 @@ export default function CS2CapsuleTracker() {
           </h2>
 
           <div className="relative">
-            {/* Average overlay (non-blocking, above chart; keep small) */}
+            {/* Overlay (non-interactive) */}
             <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
               <div style={{ color: "#6366f1", fontWeight: 700 }}>Average</div>
               <div style={{ color: "#6366f1" }}>
                 sale: {avgSale.toFixed(0)} days
+              </div>
+              <div
+                className="mt-1"
+                style={{ color: "#7c3aed", fontWeight: 700 }}
+              >
+                Avg (last 5)
+              </div>
+              <div style={{ color: "#7c3aed" }}>
+                sale: {avgSale5.toFixed(0)} days
               </div>
             </div>
 
@@ -847,7 +875,7 @@ export default function CS2CapsuleTracker() {
                 <ResponsiveContainer width="100%" height={320}>
                   <LineChart
                     data={chartData}
-                    margin={{ top: 40, right: 24, left: 0, bottom: 20 }}
+                    margin={{ top: 44, right: 24, left: 0, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
@@ -871,12 +899,18 @@ export default function CS2CapsuleTracker() {
                       wrapperStyle={{ paddingBottom: 8 }}
                     />
 
-                    {/* Average line */}
+                    {/* Average lines */}
                     <ReferenceLine
                       ifOverflow="extendDomain"
                       y={avgSale}
                       stroke="#6366f1"
                       strokeDasharray="5 5"
+                    />
+                    <ReferenceLine
+                      ifOverflow="extendDomain"
+                      y={avgSale5}
+                      stroke="#7c3aed"
+                      strokeDasharray="3 3"
                     />
 
                     <Line
@@ -987,6 +1021,8 @@ export default function CS2CapsuleTracker() {
           chartData={chartData}
           avgAvail={avgAvail}
           avgSale={avgSale}
+          avgAvail5={avgAvail5}
+          avgSale5={avgSale5}
         />
       </div>
       <footer className="mt-12 py-6 text-center text-sm text-stone-500">
