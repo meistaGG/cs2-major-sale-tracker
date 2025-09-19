@@ -232,7 +232,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     year: 2024,
     introduced: "2024-03-21",
     saleDate: "2024-04-26",
-    removed: "2024-08-20",
+    removed: "2024-08-15",
     winner: "🏆 Natus Vincere",
   },
   {
