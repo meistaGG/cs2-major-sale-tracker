@@ -260,7 +260,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     major: "StarLadder Budapest 2025",
     city: "Budapest",
     year: 2025,
-    introduced: null,
+    introduced: "2025-11-13",
     saleDate: null,
     removed: null,
     winner: null,
