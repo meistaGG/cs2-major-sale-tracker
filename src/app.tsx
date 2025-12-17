@@ -263,7 +263,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2025-11-13",
     saleDate: null,
     removed: null,
-    winner: null,
+    winner: "🏆 Team Vitality",
   },
   {
     id: "cologne-2026",
