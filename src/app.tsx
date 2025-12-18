@@ -275,6 +275,16 @@ const INITIAL_ROWS: CapsuleRow[] = [
     removed: null,
     winner: null,
   },
+  {
+    id: "singapore-2026",
+    major: "PGL Singapore 2026",
+    city: "Singapore",
+    year: 2026,
+    introduced: null,
+    saleDate: null,
+    removed: null,
+    winner: null,
+  },
 ];
 
 // --- Helpers -----------------------------------------------------------------
