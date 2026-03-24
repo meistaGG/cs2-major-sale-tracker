@@ -262,7 +262,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     year: 2025,
     introduced: "2025-11-13",
     saleDate: "2026-01-22",
-    removed: null,
+    removed: "2026-03-15",
     winner: "🏆 Team Vitality",
   },
   {
