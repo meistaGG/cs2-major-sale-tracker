@@ -526,7 +526,7 @@ export default function CS2CapsuleTracker() {
     onSort: (k: SortKey) => void;
   }) {
     return (
-      <table className="min-w-full text-sm">
+      <table className="min-w-full text-sm bg-[#2b2e39]">
         <thead className="bg-[#1e2128] text-stone-400">
           <tr>
             <th className="text-left py-3 pl-4 pr-4">Major / City</th>
@@ -967,8 +967,8 @@ export default function CS2CapsuleTracker() {
         </p>
 
         {/* Search + filters + TABLE together in one card (like your screenshot) */}
-        <Card className="mt-6 border-stone-800 bg-[#2b2e39] shadow-xl">
-          <CardContent className="p-4 md:p-6 text-white">
+        <Card className="mt-6 border-stone-800 bg-[#2b2e39] shadow-xl overflow-hidden">
+          <CardContent className="p-4 md:p-6 text-white bg-[#2b2e39]">
             {/* Controls */}
             <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
               <div className="flex flex-1 items-center gap-2">
