@@ -592,17 +592,17 @@ export default function CS2CapsuleTracker() {
                 <td className="py-3 pl-4 pr-4 whitespace-nowrap">
                   {fmt(r.saleDate)}
                 </td>
-                <td className="py-3 pl-4 pr-4 whitespace-nowrap text-red-600 font-semibold">
+                <td className="py-3 pl-4 pr-4 whitespace-nowrap text-red-400 font-semibold">
                   {fmt(r.removed)}
                 </td>
 
                 {/* Durations */}
-                <td className="py-3 pl-4 pr-4 font-medium text-stone-800">
+                <td className="py-3 pl-4 pr-4 font-medium text-stone-300">
                   {avail !== null
                     ? `${avail} days${r.removed ? "" : " (so far)"}`
                     : "—"}
                 </td>
-                <td className="py-3 pl-4 pr-4 font-medium text-stone-800">
+                <td className="py-3 pl-4 pr-4 font-medium text-stone-300">
                   {saleDur !== null
                     ? `${saleDur} days${r.removed ? "" : " (so far)"}`
                     : "—"}
@@ -959,10 +959,10 @@ export default function CS2CapsuleTracker() {
         <p className="mt-3 text-stone-300 max-w-3xl text-lg">
           Follow the journey of each Major’s{" "}
           <span className="font-semibold">sticker capsule</span>: when it{" "}
-          <span className="text-green-600 font-medium">released</span>, when the{" "}
-          <span className="text-indigo-600 font-medium">sale</span> began, and{" "}
+          <span className="text-green-400 font-medium">released</span>, when the{" "}
+          <span className="text-indigo-400 font-medium">sale</span> began, and{" "}
           when it was finally{" "}
-          <span className="text-red-600 font-medium">removed</span> from the
+          <span className="text-red-400 font-medium">removed</span> from the
           in-game store.
         </p>
 
@@ -1000,7 +1000,7 @@ export default function CS2CapsuleTracker() {
                     setQuery("");
                     setYearFilter("");
                   }}
-                  className="rounded-2xl border-stone-700 text-stone-300 hover:bg-stone-800 hover:text-white"
+                  className="rounded-2xl border-stone-700 bg-stone-900/50 text-stone-300 hover:bg-stone-800 hover:text-white"
                 >
                   Reset
                 </Button>
@@ -1044,7 +1044,7 @@ export default function CS2CapsuleTracker() {
           href="https://discord.gg/csgomarket"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-blue-400 hover:underline"
         >
           CS Market Forum
         </a>{" "}
@@ -1053,7 +1053,7 @@ export default function CS2CapsuleTracker() {
           href="https://steamcommunity.com/profiles/76561198070775836"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-blue-400 hover:underline"
         >
           meista
         </a>
