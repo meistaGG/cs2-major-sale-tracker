@@ -247,7 +247,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "austin-2025",
-    major: "PGL Austin 2025",
+    major: "BLAST.tv Austin 2025",
     city: "Austin",
     year: 2025,
     introduced: "2025-05-22",
@@ -318,13 +318,13 @@ const statusFor = (row: CapsuleRow) => {
   const intro = row.introduced ? new Date(row.introduced + "T00:00:00") : null;
   const removed = row.removed ? new Date(row.removed + "T00:00:00") : null;
   if (removed && today > removed)
-    return { label: "Removed", tone: "bg-red-100 text-red-700" };
+    return { label: "Removed", tone: "bg-red-500/10 text-red-400 border border-red-500/20" };
   if (intro && today >= intro && (!removed || today <= removed))
     return {
       label: "Active",
-      tone: "bg-green-100 text-green-700 shadow-[0_0_6px_rgba(34,197,94,0.6)] animate-pulse",
+      tone: "bg-green-500/10 text-green-400 border border-green-500/20 shadow-[0_0_8px_rgba(34,197,94,0.3)] animate-pulse",
     };
-  return { label: "Planned", tone: "bg-blue-100 text-blue-700" };
+  return { label: "Planned", tone: "bg-blue-500/10 text-blue-400 border border-blue-500/20" };
 };
 
 const statusRank = (row: CapsuleRow) => {
@@ -527,7 +527,7 @@ export default function CS2CapsuleTracker() {
   }) {
     return (
       <table className="min-w-full text-sm">
-        <thead className="bg-stone-50 text-stone-600">
+        <thead className="bg-[#1e2128] text-stone-400">
           <tr>
             <th className="text-left py-3 pl-4 pr-4">Major / City</th>
             <th
@@ -564,7 +564,7 @@ export default function CS2CapsuleTracker() {
             <th className="text-left py-3 pl-4 pr-4">Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-stone-100">
+        <tbody className="divide-y divide-stone-800">
           {rows.map((r) => {
             const avail = availabilityDays(r);
             const saleDur = diffDays(r.saleDate, r.removed);
@@ -575,10 +575,10 @@ export default function CS2CapsuleTracker() {
                 <td className="py-3 pl-4 pr-4">
                   <div className="flex items-start gap-3">
                     <div>
-                      <div className="font-semibold text-stone-800 leading-5">
+                      <div className="font-semibold text-white leading-5">
                         {r.major}
                       </div>
-                      <div className="text-stone-500 text-xs leading-4">
+                      <div className="text-stone-400 text-xs leading-4">
                         {r.city} · {r.year}
                       </div>
                     </div>
@@ -648,11 +648,11 @@ export default function CS2CapsuleTracker() {
   }) {
     return (
       <div className="mt-10">
-        <h2 className="text-2xl font-bold text-stone-800 mb-4">📊 Overview</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">📊 Overview</h2>
 
         <div className="relative">
           {/* Overlay with the 4 averages (never clipped, never overlaps) */}
-          <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
+          <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-[#1e2128]/80 backdrop-blur rounded-md px-2 py-1 shadow-sm border border-stone-700">
             <div style={{ color: "#10b981", fontWeight: 700 }}>Average</div>
             <div style={{ color: "#10b981" }}>
               avail: {avgAvail.toFixed(0)} days
@@ -687,18 +687,19 @@ export default function CS2CapsuleTracker() {
                   data={chartData}
                   margin={{ top: 50, right: 24, left: 0, bottom: 20 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                   <XAxis
                     dataKey="major"
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "#9ca3af" }}
                     interval={0}
                     angle={-20}
                     textAnchor="end"
                     height={60}
                   />
-                  <YAxis />
+                  <YAxis tick={{ fill: "#9ca3af" }} />
                   <Tooltip
                     formatter={(v: any, n: string) => [v ?? "—", n]}
+                    contentStyle={{ backgroundColor: "#1e2128", borderColor: "#374151", color: "#fff" }}
                     labelFormatter={(l) => `${l}`}
                     wrapperStyle={{ zIndex: 50 }}
                   />
@@ -775,13 +776,13 @@ export default function CS2CapsuleTracker() {
       <div className="mt-10 space-y-10">
         {/* Availability line */}
         <div>
-          <h2 className="text-2xl font-bold text-stone-800 mb-4">
+          <h2 className="text-2xl font-bold text-white mb-4">
             📈 Availability Over Time
           </h2>
 
           <div className="relative">
             {/* Overlay (non-interactive) */}
-            <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
+            <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-[#1e2128]/80 backdrop-blur rounded-md px-2 py-1 shadow-sm border border-stone-700">
               <div style={{ color: "#10b981", fontWeight: 700 }}>Average</div>
               <div style={{ color: "#10b981" }}>
                 avail: {avgAvail.toFixed(0)} days
@@ -804,18 +805,19 @@ export default function CS2CapsuleTracker() {
                     data={chartData}
                     margin={{ top: 44, right: 24, left: 0, bottom: 20 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis
                       dataKey="major"
-                      tick={{ fontSize: 12 }}
+                      tick={{ fontSize: 12, fill: "#9ca3af" }}
                       interval={0}
                       angle={-20}
                       textAnchor="end"
                       height={60}
                     />
-                    <YAxis />
+                    <YAxis tick={{ fill: "#9ca3af" }} />
                     <Tooltip
                       formatter={(v: any, n: string) => [v ?? "—", n]}
+                      contentStyle={{ backgroundColor: "#1e2128", borderColor: "#374151", color: "#fff" }}
                       labelFormatter={(l) => `${l}`}
                       wrapperStyle={{ zIndex: 50 }}
                     />
@@ -858,13 +860,13 @@ export default function CS2CapsuleTracker() {
 
         {/* Sale Duration line */}
         <div>
-          <h2 className="text-2xl font-bold text-stone-800 mb-4">
+          <h2 className="text-2xl font-bold text-white mb-4">
             📈 Sale Duration Over Time
           </h2>
 
           <div className="relative">
             {/* Overlay (non-interactive) */}
-            <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-white/85 backdrop-blur rounded-md px-2 py-1 shadow-sm">
+            <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-[#1e2128]/80 backdrop-blur rounded-md px-2 py-1 shadow-sm border border-stone-700">
               <div style={{ color: "#6366f1", fontWeight: 700 }}>Average</div>
               <div style={{ color: "#6366f1" }}>
                 sale: {avgSale.toFixed(0)} days
@@ -887,18 +889,19 @@ export default function CS2CapsuleTracker() {
                     data={chartData}
                     margin={{ top: 44, right: 24, left: 0, bottom: 20 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis
                       dataKey="major"
-                      tick={{ fontSize: 12 }}
+                      tick={{ fontSize: 12, fill: "#9ca3af" }}
                       interval={0}
                       angle={-20}
                       textAnchor="end"
                       height={60}
                     />
-                    <YAxis />
+                    <YAxis tick={{ fill: "#9ca3af" }} />
                     <Tooltip
                       formatter={(v: any, n: string) => [v ?? "—", n]}
+                      contentStyle={{ backgroundColor: "#1e2128", borderColor: "#374151", color: "#fff" }}
                       labelFormatter={(l) => `${l}`}
                       wrapperStyle={{ zIndex: 50 }}
                     />
@@ -944,16 +947,16 @@ export default function CS2CapsuleTracker() {
 
   // --- Page -------------------------------------------------------------------
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 py-10 text-stone-900">
+    <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-10 bg-[#24272f] text-[#ffffff]">
       <div className="mx-auto max-w-screen-2xl">
         <motion.h1
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-extrabold tracking-tight text-stone-800"
+          className="text-4xl font-extrabold tracking-tight text-white"
         >
           🎯 CS Major Capsule Tracking
         </motion.h1>
-        <p className="mt-3 text-stone-600 max-w-3xl text-lg">
+        <p className="mt-3 text-stone-300 max-w-3xl text-lg">
           Follow the journey of each Major’s{" "}
           <span className="font-semibold">sticker capsule</span>: when it{" "}
           <span className="text-green-600 font-medium">released</span>, when the{" "}
@@ -964,8 +967,8 @@ export default function CS2CapsuleTracker() {
         </p>
 
         {/* Search + filters + TABLE together in one card (like your screenshot) */}
-        <Card className="mt-6 border-stone-200 shadow-sm">
-          <CardContent className="p-4 md:p-6">
+        <Card className="mt-6 border-stone-800 bg-[#2b2e39] shadow-xl">
+          <CardContent className="p-4 md:p-6 text-white">
             {/* Controls */}
             <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
               <div className="flex flex-1 items-center gap-2">
@@ -974,7 +977,7 @@ export default function CS2CapsuleTracker() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search a Major or city"
-                  className="max-w-sm"
+                  className="max-w-sm bg-[#1e2128] border-stone-700 text-white placeholder:text-stone-500"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -982,7 +985,7 @@ export default function CS2CapsuleTracker() {
                 <select
                   value={yearFilter}
                   onChange={(e) => setYearFilter(e.target.value)}
-                  className="border rounded-xl px-3 py-2 bg-white shadow-sm"
+                  className="border border-stone-700 rounded-xl px-3 py-2 bg-[#1e2128] text-white shadow-sm"
                 >
                   <option value="">All years</option>
                   {years.map((y) => (
@@ -997,7 +1000,7 @@ export default function CS2CapsuleTracker() {
                     setQuery("");
                     setYearFilter("");
                   }}
-                  className="rounded-2xl"
+                  className="rounded-2xl border-stone-700 text-stone-300 hover:bg-stone-800 hover:text-white"
                 >
                   Reset
                 </Button>
@@ -1005,7 +1008,7 @@ export default function CS2CapsuleTracker() {
             </div>
 
             {/* Divider */}
-            <div className="h-px bg-stone-200 my-4" />
+            <div className="h-px bg-stone-800 my-4" />
 
             {/* Table inside the same card */}
             <div className="overflow-x-auto">
