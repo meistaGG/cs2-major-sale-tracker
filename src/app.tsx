@@ -270,7 +270,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     major: "IEM Cologne 2026",
     city: "Cologne",
     year: 2026,
-    introduced: null,
+    introduced: "2026-05-22",
     saleDate: null,
     removed: null,
     winner: null,
