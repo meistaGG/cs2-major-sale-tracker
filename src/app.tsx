@@ -452,8 +452,12 @@ export default function CS2CapsuleTracker() {
 
   const isNum = (v: number | null): v is number => v !== null;
 
+  const isCompleted = (r: CapsuleRow) =>
+    !!r.removed && new Date(r.removed + "T00:00:00") < new Date();
+
   const avgSale = useMemo(() => {
     const vals = filtered
+      .filter(isCompleted)
       .map((r) => diffDays(r.saleDate, r.removed))
       .filter((v): v is number => v !== null);
     return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
@@ -461,6 +465,7 @@ export default function CS2CapsuleTracker() {
 
   const avgAvail = useMemo(() => {
     const vals = filtered
+      .filter(isCompleted)
       .map((r) => availabilityDays(r))
       .filter((v): v is number => v !== null);
     return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
@@ -471,7 +476,7 @@ export default function CS2CapsuleTracker() {
     const parse = (d: string | null) =>
       d ? new Date(d + "T00:00:00").getTime() : 0;
     const recent = filtered
-      .filter((r) => !!r.introduced)
+      .filter((r) => !!r.introduced && isCompleted(r))
       .sort((a, b) => parse(b.introduced) - parse(a.introduced))
       .slice(0, 5);
 
