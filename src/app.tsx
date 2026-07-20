@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, CalendarDays, Search, Filter } from "lucide-react";
+import { ArrowUpDown, CalendarDays, Search, Filter, Info } from "lucide-react";
 import { Analytics } from "@vercel/analytics/react";
 import { motion } from "framer-motion";
 import {
@@ -29,6 +29,8 @@ export type CapsuleRow = {
   saleDate: string | null; // "Sale" wording only in UI
   removed: string | null;
   winner?: string | null; // e.g. "🏆 Team Vitality"
+  note?: string | null; // small info tip shown next to the Major name
+  noteUrl?: string | null; // optional source for the note
 };
 
 const INITIAL_ROWS: CapsuleRow[] = [
@@ -273,7 +275,9 @@ const INITIAL_ROWS: CapsuleRow[] = [
     introduced: "2026-05-22",
     saleDate: null,
     removed: null,
-    winner: null,
+    winner: "🏆 Team Falcons",
+    note: "First Major to use Valve's new volatile shop, so the usual sale/removal timings may not apply.",
+    noteUrl: "https://www.counter-strike.net/newsentry/672869045073084948",
   },
   {
     id: "singapore-2026",
@@ -366,6 +370,35 @@ const RightMultiLineLabel: React.FC<{
         </tspan>
       ))}
     </text>
+  );
+};
+
+// Small info tip attached to a Major (e.g. a rules change that affects its dates).
+const NoteTip: React.FC<{ note: string; url?: string | null }> = ({
+  note,
+  url,
+}) => {
+  const body = (
+    <>
+      <Info className="w-3 h-3 shrink-0" />
+      <span>{note}</span>
+    </>
+  );
+  const tone =
+    "mt-1.5 inline-flex items-start gap-1.5 max-w-[22rem] rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-[11px] leading-4 text-amber-300";
+
+  return url ? (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${tone} hover:bg-amber-500/20 hover:text-amber-200`}
+      title="Read the announcement on counter-strike.net"
+    >
+      {body}
+    </a>
+  ) : (
+    <div className={tone}>{body}</div>
   );
 };
 
@@ -586,6 +619,7 @@ export default function CS2CapsuleTracker() {
                       <div className="text-stone-400 text-xs leading-4">
                         {r.city} · {r.year}
                       </div>
+                      {r.note && <NoteTip note={r.note} url={r.noteUrl} />}
                     </div>
                   </div>
                 </td>
