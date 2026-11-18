@@ -4,11 +4,12 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "defaul
 
 export const Button = React.forwardRef<HTMLButtonElement, Props>(
   ({ className = "", variant = "default", ...props }, ref) => {
-    const base = "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition";
+    const base =
+      "inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-[#3987e5]";
     const styles =
       variant === "outline"
-        ? "border border-stone-700 bg-stone-900/50 text-stone-300 hover:bg-stone-800 hover:text-white"
-        : "bg-stone-800 text-white hover:bg-stone-700";
+        ? "border border-white/10 text-gray-400 hover:border-white/25 hover:text-white"
+        : "bg-[#3987e5] text-white hover:bg-[#2a78d6]";
     return <button ref={ref} className={`${base} ${styles} ${className}`} {...props} />;
   }
 );

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown, CalendarDays, Search, Filter, Info } from "lucide-react";
 import { Analytics } from "@vercel/analytics/react";
 import { motion } from "framer-motion";
+import { SERIES, MUTED, GRID, AXIS, TOOLTIP_STYLE } from "@/theme";
 import {
   BarChart,
   Bar,
@@ -274,7 +275,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
     year: 2026,
     introduced: "2026-05-22",
     saleDate: null,
-    removed: null,
+    removed: "2026-09-29",
     winner: "🏆 Team Falcons",
     note: "First Major to use Valve's new volatile shop, so the usual sale/removal timings may not apply.",
     noteUrl: "https://www.counter-strike.net/newsentry/672869045073084948",
@@ -284,10 +285,13 @@ const INITIAL_ROWS: CapsuleRow[] = [
     major: "PGL Singapore 2026",
     city: "Singapore",
     year: 2026,
-    introduced: null,
+    introduced: "2026-11-17",
     saleDate: null,
     removed: null,
     winner: null,
+    note: "No capsules: autograph stickers are sold directly at a fixed price in each finish.",
+    noteUrl:
+      "https://steamcommunity.com/games/CSGO/announcements/detail/687522235410285289",
   },
 ];
 
@@ -322,13 +326,13 @@ const statusFor = (row: CapsuleRow) => {
   const intro = row.introduced ? new Date(row.introduced + "T00:00:00") : null;
   const removed = row.removed ? new Date(row.removed + "T00:00:00") : null;
   if (removed && today > removed)
-    return { label: "Removed", tone: "bg-red-500/10 text-red-400 border border-red-500/20" };
+    return { label: "Removed", tone: "bg-red-400/10 text-red-400 border border-red-400/25" };
   if (intro && today >= intro && (!removed || today <= removed))
     return {
       label: "Active",
-      tone: "bg-green-500/10 text-green-400 border border-green-500/20 shadow-[0_0_8px_rgba(34,197,94,0.3)] animate-pulse",
+      tone: "bg-emerald-400/10 text-emerald-400 border border-emerald-400/25 motion-safe:animate-pulse",
     };
-  return { label: "Planned", tone: "bg-blue-500/10 text-blue-400 border border-blue-500/20" };
+  return { label: "Planned", tone: "bg-[#3987e5]/10 text-[#86b6ef] border border-[#3987e5]/30" };
 };
 
 const statusRank = (row: CapsuleRow) => {
@@ -385,7 +389,7 @@ const NoteTip: React.FC<{ note: string; url?: string | null }> = ({
     </>
   );
   const tone =
-    "mt-1.5 inline-flex items-start gap-1.5 max-w-[22rem] rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-[11px] leading-4 text-amber-300";
+    "mt-1.5 inline-flex items-start gap-1.5 max-w-[22rem] rounded-md border border-amber-400/25 bg-amber-400/10 px-2 py-1 text-[11px] leading-4 text-amber-300/90 whitespace-normal";
 
   return url ? (
     <a
@@ -393,7 +397,7 @@ const NoteTip: React.FC<{ note: string; url?: string | null }> = ({
       target="_blank"
       rel="noopener noreferrer"
       className={`${tone} hover:bg-amber-500/20 hover:text-amber-200`}
-      title="Read the announcement on counter-strike.net"
+      title="Read Valve's announcement"
     >
       {body}
     </a>
@@ -563,97 +567,93 @@ export default function CS2CapsuleTracker() {
     rows: CapsuleRow[];
     onSort: (k: SortKey) => void;
   }) {
+    const th = "text-left font-medium text-gray-400 pb-2 px-2 whitespace-nowrap";
+    const sortTh = (key: SortKey, label: string) => (
+      <th
+        className={`${th} cursor-pointer transition-colors hover:text-white`}
+        onClick={() => onSort(key)}
+        aria-sort={
+          sort.key === key
+            ? sort.dir === "asc"
+              ? "ascending"
+              : "descending"
+            : "none"
+        }
+      >
+        <span className="inline-flex items-center gap-1">
+          {label}
+          <ArrowUpDown
+            className={`w-3 h-3 ${sort.key === key ? "text-[#3987e5]" : "text-gray-600"}`}
+          />
+        </span>
+      </th>
+    );
+    const td = "px-2 py-2";
+
     return (
-      <table className="min-w-full text-sm bg-[#2b2e39]">
-        <thead className="bg-[#1e2128] text-stone-400">
+      <table className="row-hover min-w-full border-separate border-spacing-0 text-xs">
+        <thead>
           <tr>
-            <th className="text-left py-3 pl-4 pr-4">Major / City</th>
-            <th
-              className="text-left py-3 pl-4 pr-4 cursor-pointer"
-              onClick={() => onSort("introduced")}
-            >
-              <div className="inline-flex items-center gap-1">
-                Introduced <ArrowUpDown className="w-3 h-3" />
-              </div>
-            </th>
-            <th
-              className="text-left py-3 pl-4 pr-4 cursor-pointer"
-              onClick={() => onSort("saleDate")}
-            >
-              <div className="inline-flex items-center gap-1">
-                Sale <ArrowUpDown className="w-3 h-3" />
-              </div>
-            </th>
-            <th
-              className="text-left py-3 pl-4 pr-4 cursor-pointer"
-              onClick={() => onSort("removed")}
-            >
-              <div className="inline-flex items-center gap-1">
-                Removed <ArrowUpDown className="w-3 h-3" />
-              </div>
-            </th>
-            <th className="text-left py-3 pl-4 pr-4">
-              Availability (intro → removal)
-            </th>
-            <th className="text-left py-3 pl-4 pr-4">
-              Sale Duration (sale → removal)
-            </th>
-            <th className="text-left py-3 pl-4 pr-4">Champion</th>
-            <th className="text-left py-3 pl-4 pr-4">Status</th>
+            <th className={th}>Major / City</th>
+            {sortTh("introduced", "Introduced")}
+            {sortTh("saleDate", "Sale")}
+            {sortTh("removed", "Removed")}
+            <th className={th}>Availability (intro → removal)</th>
+            <th className={th}>Sale Duration (sale → removal)</th>
+            <th className={th}>Champion</th>
+            <th className={th}>Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-stone-800">
+        <tbody className="[&>tr>td]:border-t [&>tr>td]:border-white/5">
           {rows.map((r) => {
             const avail = availabilityDays(r);
             const saleDur = diffDays(r.saleDate, r.removed);
             const status = statusFor(r);
             return (
               <tr key={r.id} className="align-top">
-                {/* Tournament cell with logo + name + city/year */}
-                <td className="py-3 pl-4 pr-4">
-                  <div className="flex items-start gap-3">
-                    <div>
-                      <div className="font-semibold text-white leading-5">
-                        {r.major}
-                      </div>
-                      <div className="text-stone-400 text-xs leading-4">
-                        {r.city} · {r.year}
-                      </div>
-                      {r.note && <NoteTip note={r.note} url={r.noteUrl} />}
-                    </div>
+                {/* Tournament cell: name + city/year + optional tip */}
+                <td className={td}>
+                  <div className="font-semibold text-white leading-5">
+                    {r.major}
                   </div>
+                  <div className="text-gray-500 text-[13px] leading-4 mt-0.5">
+                    {r.city} · {r.year}
+                  </div>
+                  {r.note && <NoteTip note={r.note} url={r.noteUrl} />}
                 </td>
 
                 {/* Dates */}
-                <td className="py-3 pl-4 pr-4 whitespace-nowrap">
+                <td className={`${td} whitespace-nowrap tabular-nums text-gray-300`}>
                   {fmt(r.introduced)}
                 </td>
-                <td className="py-3 pl-4 pr-4 whitespace-nowrap">
+                <td className={`${td} whitespace-nowrap tabular-nums text-gray-300`}>
                   {fmt(r.saleDate)}
                 </td>
-                <td className="py-3 pl-4 pr-4 whitespace-nowrap text-red-400 font-semibold">
+                <td className={`${td} whitespace-nowrap tabular-nums text-red-400 font-medium`}>
                   {fmt(r.removed)}
                 </td>
 
                 {/* Durations */}
-                <td className="py-3 pl-4 pr-4 font-medium text-stone-300">
+                <td className={`${td} tabular-nums text-gray-300`}>
                   {avail !== null
                     ? `${avail} days${r.removed ? "" : " (so far)"}`
                     : "—"}
                 </td>
-                <td className="py-3 pl-4 pr-4 font-medium text-stone-300">
+                <td className={`${td} tabular-nums text-gray-300`}>
                   {saleDur !== null
                     ? `${saleDur} days${r.removed ? "" : " (so far)"}`
                     : "—"}
                 </td>
 
                 {/* Winner */}
-                <td className="py-3 pl-4 pr-4">{r.winner || "—"}</td>
+                <td className={`${td} whitespace-nowrap text-gray-300`}>
+                  {r.winner || "—"}
+                </td>
 
                 {/* Status pill */}
-                <td className="py-3 pl-4 pr-4">
+                <td className={td}>
                   <span
-                    className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium ${status.tone}`}
+                    className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium ${status.tone}`}
                   >
                     <span className="inline-block w-1.5 h-1.5 rounded-full bg-current" />
                     {status.label}
@@ -667,364 +667,182 @@ export default function CS2CapsuleTracker() {
     );
   }
 
-  // --- Chart component (after table) -----------------------------------------
-  function ChartSection({
-    chartData,
-    avgAvail,
-    avgSale,
-    avgAvail5,
-    avgSale5,
-  }: {
-    chartData: Array<{
-      major: string;
-      availability: number;
-      saleDuration: number;
-    }>;
-    avgAvail: number;
-    avgSale: number;
-    avgAvail5: number;
-    avgSale5: number;
-  }) {
-    return (
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold text-white mb-4">📊 Overview</h2>
+  // --- Shared chart pieces ----------------------------------------------------
+  type ChartRow = { major: string; availability: number; saleDuration: number };
+  type AvgLine = { label: string; value: number; color: string; dash: string };
 
-        <div className="relative">
-          {/* Overlay with the 4 averages (never clipped, never overlaps) */}
-          <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-[#1e2128]/80 backdrop-blur rounded-md px-2 py-1 shadow-sm border border-stone-700">
-            <div style={{ color: "#10b981", fontWeight: 700 }}>Average</div>
-            <div style={{ color: "#10b981" }}>
-              avail: {avgAvail.toFixed(0)} days
-            </div>
+  const AVAIL_COLOR = SERIES[0];
+  const SALE_COLOR = SERIES[1];
+  const AVAIL5_COLOR = SERIES[2];
+  const SALE5_COLOR = SERIES[3];
 
-            <div style={{ color: "#6366f1", fontWeight: 700, marginTop: 4 }}>
-              Average
-            </div>
-            <div style={{ color: "#6366f1" }}>
-              sale: {avgSale.toFixed(0)} days
-            </div>
-
-            <div style={{ color: "#0ea5e9", fontWeight: 700, marginTop: 4 }}>
-              Avg (last 5 Majors)
-            </div>
-            <div style={{ color: "#0ea5e9" }}>
-              avail: {avgAvail5.toFixed(0)} days
-            </div>
-
-            <div style={{ color: "#7c3aed", fontWeight: 700, marginTop: 4 }}>
-              Avg (last 5 Majors)
-            </div>
-            <div style={{ color: "#7c3aed" }}>
-              sale: {avgSale5.toFixed(0)} days
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <div className="w-full min-w-[900px] lg:min-w-0">
-              <ResponsiveContainer width="100%" height={360}>
-                <BarChart
-                  data={chartData}
-                  margin={{ top: 50, right: 24, left: 0, bottom: 20 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis
-                    dataKey="major"
-                    tick={{ fontSize: 12, fill: "#9ca3af" }}
-                    interval={0}
-                    angle={-20}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis tick={{ fill: "#9ca3af" }} />
-                  <Tooltip
-                    formatter={(v: any, n: string) => [v ?? "—", n]}
-                    contentStyle={{ backgroundColor: "#1e2128", borderColor: "#374151", color: "#fff" }}
-                    labelFormatter={(l) => `${l}`}
-                    wrapperStyle={{ zIndex: 50 }}
-                  />
-                  <Legend
-                    verticalAlign="top"
-                    align="left"
-                    height={32}
-                    wrapperStyle={{ paddingBottom: 8 }}
-                  />
-                  <Bar
-                    dataKey="availability"
-                    name="Intro → Removal"
-                    fill="#10b981"
-                    radius={[6, 6, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="saleDuration"
-                    name="Sale → Removal"
-                    fill="#6366f1"
-                    radius={[6, 6, 0, 0]}
-                  />
-                  {/* Lines only; text lives in overlay to avoid clipping/overlap */}
-                  <ReferenceLine
-                    ifOverflow="extendDomain"
-                    y={avgAvail}
-                    stroke="#10b981"
-                    strokeDasharray="5 5"
-                  />
-                  <ReferenceLine
-                    ifOverflow="extendDomain"
-                    y={avgSale}
-                    stroke="#6366f1"
-                    strokeDasharray="5 5"
-                  />
-                  <ReferenceLine
-                    ifOverflow="extendDomain"
-                    y={avgAvail5}
-                    stroke="#0ea5e9"
-                    strokeDasharray="3 3"
-                  />
-                  <ReferenceLine
-                    ifOverflow="extendDomain"
-                    y={avgSale5}
-                    stroke="#7c3aed"
-                    strokeDasharray="3 3"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+  // Averages legend, top-right of each chart
+  const AvgOverlay = ({ lines }: { lines: AvgLine[] }) => (
+    <div className="absolute right-2 top-2 z-10 pointer-events-none rounded-lg border border-white/10 bg-[#1b1d24]/90 backdrop-blur px-2.5 py-1.5 text-[12px] leading-5 shadow-soft">
+      {lines.map((l) => (
+        <div key={l.label} className="flex items-center gap-2 text-gray-300">
+          <svg width="16" height="4" aria-hidden="true">
+            <line
+              x1="0"
+              y1="2"
+              x2="16"
+              y2="2"
+              stroke={l.color}
+              strokeWidth="2"
+              strokeDasharray={l.dash}
+            />
+          </svg>
+          <span>{l.label}</span>
+          <span className="ml-auto pl-2 tabular-nums font-medium text-white">
+            {l.value.toFixed(0)} days
+          </span>
         </div>
-      </div>
-    );
-  }
+      ))}
+    </div>
+  );
 
-  function LineChartsSection({
-    chartData,
-    avgAvail,
-    avgSale,
-    avgAvail5,
-    avgSale5,
+  const xAxis = (
+    <XAxis
+      dataKey="major"
+      tick={{ fontSize: 12, fill: MUTED }}
+      tickLine={false}
+      axisLine={{ stroke: AXIS }}
+      interval={0}
+      angle={-20}
+      textAnchor="end"
+      height={60}
+    />
+  );
+  const yAxis = (
+    <YAxis tick={{ fontSize: 13, fill: MUTED }} tickLine={false} axisLine={false} />
+  );
+  const grid = <CartesianGrid stroke={GRID} vertical={false} />;
+  const tooltip = (cursor: object) => (
+    <Tooltip
+      formatter={(v: any, n: string) => [v ?? "—", n]}
+      contentStyle={TOOLTIP_STYLE}
+      labelStyle={{ color: "#ffffff", fontWeight: 600, marginBottom: 2 }}
+      itemStyle={{ padding: 0 }}
+      cursor={cursor}
+      wrapperStyle={{ zIndex: 50, outline: "none" }}
+    />
+  );
+  const legend = (
+    <Legend
+      verticalAlign="top"
+      align="left"
+      height={32}
+      iconType="circle"
+      iconSize={8}
+      wrapperStyle={{ paddingBottom: 8 }}
+      formatter={(v) => <span className="text-[13px] text-gray-300">{v}</span>}
+    />
+  );
+  const avgLines = (lines: AvgLine[]) =>
+    lines.map((l) => (
+      <ReferenceLine
+        key={l.label}
+        ifOverflow="extendDomain"
+        y={l.value}
+        stroke={l.color}
+        strokeDasharray={l.dash}
+      />
+    ));
+
+  function ChartCard({
+    title,
+    subtitle,
+    lines,
+    height,
+    children,
   }: {
-    chartData: Array<{
-      major: string;
-      availability: number;
-      saleDuration: number;
-    }>;
-    avgAvail: number;
-    avgSale: number;
-    avgAvail5: number;
-    avgSale5: number;
+    title: string;
+    subtitle: string;
+    lines: AvgLine[];
+    height: number;
+    children: React.ReactElement;
   }) {
     return (
-      <div className="mt-10 space-y-10">
-        {/* Availability line */}
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-4">
-            📈 Availability Over Time
-          </h2>
-
+      <Card className="mb-6">
+        <CardContent>
+          <h2 className="text-lg font-semibold">{title}</h2>
+          <p className="mt-1 mb-4 text-sm text-gray-400">{subtitle}</p>
           <div className="relative">
-            {/* Overlay (non-interactive) */}
-            <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-[#1e2128]/80 backdrop-blur rounded-md px-2 py-1 shadow-sm border border-stone-700">
-              <div style={{ color: "#10b981", fontWeight: 700 }}>Average</div>
-              <div style={{ color: "#10b981" }}>
-                avail: {avgAvail.toFixed(0)} days
-              </div>
-              <div
-                className="mt-1"
-                style={{ color: "#0ea5e9", fontWeight: 700 }}
-              >
-                Avg (last 5 Majors)
-              </div>
-              <div style={{ color: "#0ea5e9" }}>
-                avail: {avgAvail5.toFixed(0)} days
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
+            <AvgOverlay lines={lines} />
+            <div className="grid-scroll overflow-x-auto">
               <div className="w-full min-w-[900px] lg:min-w-0">
-                <ResponsiveContainer width="100%" height={320}>
-                  <LineChart
-                    data={chartData}
-                    margin={{ top: 44, right: 24, left: 0, bottom: 20 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis
-                      dataKey="major"
-                      tick={{ fontSize: 12, fill: "#9ca3af" }}
-                      interval={0}
-                      angle={-20}
-                      textAnchor="end"
-                      height={60}
-                    />
-                    <YAxis tick={{ fill: "#9ca3af" }} />
-                    <Tooltip
-                      formatter={(v: any, n: string) => [v ?? "—", n]}
-                      contentStyle={{ backgroundColor: "#1e2128", borderColor: "#374151", color: "#fff" }}
-                      labelFormatter={(l) => `${l}`}
-                      wrapperStyle={{ zIndex: 50 }}
-                    />
-                    <Legend
-                      verticalAlign="top"
-                      align="left"
-                      height={32}
-                      wrapperStyle={{ paddingBottom: 8 }}
-                    />
-
-                    {/* Average lines */}
-                    <ReferenceLine
-                      ifOverflow="extendDomain"
-                      y={avgAvail}
-                      stroke="#10b981"
-                      strokeDasharray="5 5"
-                    />
-                    <ReferenceLine
-                      ifOverflow="extendDomain"
-                      y={avgAvail5}
-                      stroke="#0ea5e9"
-                      strokeDasharray="3 3"
-                    />
-
-                    <Line
-                      type="monotone"
-                      dataKey="availability"
-                      name="Intro → Removal"
-                      stroke="#10b981"
-                      strokeWidth={2}
-                      dot={{ r: 3 }}
-                      activeDot={{ r: 5 }}
-                    />
-                  </LineChart>
+                <ResponsiveContainer width="100%" height={height}>
+                  {children}
                 </ResponsiveContainer>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Sale Duration line */}
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-4">
-            📈 Sale Duration Over Time
-          </h2>
-
-          <div className="relative">
-            {/* Overlay (non-interactive) */}
-            <div className="absolute right-2 top-2 z-10 pointer-events-none text-xs leading-5 bg-[#1e2128]/80 backdrop-blur rounded-md px-2 py-1 shadow-sm border border-stone-700">
-              <div style={{ color: "#6366f1", fontWeight: 700 }}>Average</div>
-              <div style={{ color: "#6366f1" }}>
-                sale: {avgSale.toFixed(0)} days
-              </div>
-              <div
-                className="mt-1"
-                style={{ color: "#7c3aed", fontWeight: 700 }}
-              >
-                Avg (last 5 Majors)
-              </div>
-              <div style={{ color: "#7c3aed" }}>
-                sale: {avgSale5.toFixed(0)} days
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <div className="w-full min-w-[900px] lg:min-w-0">
-                <ResponsiveContainer width="100%" height={320}>
-                  <LineChart
-                    data={chartData}
-                    margin={{ top: 44, right: 24, left: 0, bottom: 20 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis
-                      dataKey="major"
-                      tick={{ fontSize: 12, fill: "#9ca3af" }}
-                      interval={0}
-                      angle={-20}
-                      textAnchor="end"
-                      height={60}
-                    />
-                    <YAxis tick={{ fill: "#9ca3af" }} />
-                    <Tooltip
-                      formatter={(v: any, n: string) => [v ?? "—", n]}
-                      contentStyle={{ backgroundColor: "#1e2128", borderColor: "#374151", color: "#fff" }}
-                      labelFormatter={(l) => `${l}`}
-                      wrapperStyle={{ zIndex: 50 }}
-                    />
-                    <Legend
-                      verticalAlign="top"
-                      align="left"
-                      height={32}
-                      wrapperStyle={{ paddingBottom: 8 }}
-                    />
-
-                    {/* Average lines */}
-                    <ReferenceLine
-                      ifOverflow="extendDomain"
-                      y={avgSale}
-                      stroke="#6366f1"
-                      strokeDasharray="5 5"
-                    />
-                    <ReferenceLine
-                      ifOverflow="extendDomain"
-                      y={avgSale5}
-                      stroke="#7c3aed"
-                      strokeDasharray="3 3"
-                    />
-
-                    <Line
-                      type="monotone"
-                      dataKey="saleDuration"
-                      name="Sale → Removal"
-                      stroke="#6366f1"
-                      strokeWidth={2}
-                      dot={{ r: 3 }}
-                      activeDot={{ r: 5 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
   // --- Page -------------------------------------------------------------------
-  return (
-    <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-10 bg-[#24272f] text-[#ffffff]">
-      <div className="mx-auto max-w-screen-2xl">
-        <motion.h1
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-extrabold tracking-tight text-white"
-        >
-          🎯 CS Major Capsule Tracking
-        </motion.h1>
-        <p className="mt-3 text-stone-300 max-w-3xl text-lg">
-          Follow the journey of each Major’s{" "}
-          <span className="font-semibold">sticker capsule</span>: when it{" "}
-          <span className="text-green-400 font-medium">released</span>, when the{" "}
-          <span className="text-indigo-400 font-medium">sale</span> began, and{" "}
-          when it was finally{" "}
-          <span className="text-red-400 font-medium">removed</span> from the
-          in-game store.
-        </p>
+  const availLines: AvgLine[] = [
+    { label: "Avg availability", value: avgAvail, color: AVAIL_COLOR, dash: "5 5" },
+    { label: "Availability, last 5 Majors", value: avgAvail5, color: AVAIL5_COLOR, dash: "3 3" },
+  ];
+  const saleLines: AvgLine[] = [
+    { label: "Avg sale duration", value: avgSale, color: SALE_COLOR, dash: "5 5" },
+    { label: "Sale, last 5 Majors", value: avgSale5, color: SALE5_COLOR, dash: "3 3" },
+  ];
+  const data: ChartRow[] = chartData;
 
-        {/* Search + filters + TABLE together in one card (like your screenshot) */}
-        <Card className="mt-6 border-stone-800 bg-[#2b2e39] shadow-xl overflow-hidden">
-          <CardContent className="p-4 md:p-6 text-white bg-[#2b2e39]">
-            {/* Controls */}
+  return (
+    <div className="min-h-screen p-4 sm:p-6 bg-[#1b1d24] text-white">
+      {/* Same mark, same place, as the other CS Market Forum sites. */}
+      <div className="flex justify-center mb-4">
+        <div className="h-16 w-16 flex items-center justify-center rounded-full shadow-inner">
+          <img src="/logo.png" alt="CS Market Forum" className="h-12 w-12 object-contain" />
+        </div>
+      </div>
+      <motion.h1
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="text-3xl sm:text-4xl font-bold text-center mb-2"
+      >
+        Major Capsule Tracker
+      </motion.h1>
+      <p className="text-center mb-6 text-xs text-gray-500 max-w-2xl mx-auto">
+        When each Major’s sticker capsule was{" "}
+        <span className="text-emerald-400 font-medium">released</span>, when
+        its <span className="text-amber-300 font-medium">sale</span> began, and
+        when it was <span className="text-red-400 font-medium">removed</span>{" "}
+        from the in-game store.
+      </p>
+
+      <div className="mx-auto max-w-screen-2xl">
+        {/* Search + filters + table in one card */}
+        <Card className="mb-6">
+          <CardContent>
             <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-              <div className="flex flex-1 items-center gap-2">
-                <Search className="w-4 h-4 text-stone-500" />
+              <div className="relative w-full md:w-80">
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500"
+                />
                 <Input
+                  type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search a Major or city"
-                  className="max-w-sm bg-[#1e2128] border-stone-700 text-white placeholder:text-stone-500"
+                  placeholder="Search a Major or city…"
+                  aria-label="Search a Major or city"
+                  className="pl-10"
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4 text-stone-500" />
+                <Filter className="w-4 h-4 text-gray-500" aria-hidden="true" />
                 <select
                   value={yearFilter}
                   onChange={(e) => setYearFilter(e.target.value)}
-                  className="border border-stone-700 rounded-xl px-3 py-2 bg-[#1e2128] text-white shadow-sm"
+                  aria-label="Filter by year"
+                  className="rounded-lg border border-white/10 bg-[#1b1d24] px-3 py-2 text-sm text-white focus:border-white/25 focus:outline-none focus:ring-1 focus:ring-[#3987e5]"
                 >
                   <option value="">All years</option>
                   {years.map((y) => (
@@ -1033,51 +851,101 @@ export default function CS2CapsuleTracker() {
                     </option>
                   ))}
                 </select>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setQuery("");
-                    setYearFilter("");
-                  }}
-                  className="rounded-2xl border-stone-700 bg-stone-900/50 text-stone-300 hover:bg-stone-800 hover:text-white"
-                >
-                  Reset
-                </Button>
+                {(query || yearFilter) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setQuery("");
+                      setYearFilter("");
+                    }}
+                  >
+                    Reset
+                  </Button>
+                )}
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="h-px bg-stone-800 my-4" />
-
-            {/* Table inside the same card */}
-            <div className="overflow-x-auto">
+            <div className="mt-4 grid-scroll overflow-x-auto">
               <TableSection rows={filtered} onSort={toggleSort} />
             </div>
 
-            <p className="mt-3 text-xs text-stone-500">
-              ⓘ Data is curated from Liquipedia, CSGOSKINS.GG and HLTV. Some
-              dates may be inaccurate.
+            <p className="mt-4 text-xs text-gray-500">
+              Data is curated from Liquipedia, CSGOSKINS.GG, HLTV and Valve’s
+              announcements. Some dates may be inaccurate.
             </p>
           </CardContent>
         </Card>
 
-        {/* Chart section (after table) */}
-        <ChartSection
-          chartData={chartData}
-          avgAvail={avgAvail}
-          avgSale={avgSale}
-          avgAvail5={avgAvail5}
-          avgSale5={avgSale5}
-        />
-        <LineChartsSection
-          chartData={chartData}
-          avgAvail={avgAvail}
-          avgSale={avgSale}
-          avgAvail5={avgAvail5}
-          avgSale5={avgSale5}
-        />
+        <ChartCard
+          title="Overview"
+          subtitle="Days from introduction and from sale start to removal, per Major."
+          lines={[...availLines, ...saleLines]}
+          height={360}
+        >
+          <BarChart data={data} margin={{ top: 50, right: 24, left: 0, bottom: 20 }}>
+            {grid}
+            {xAxis}
+            {yAxis}
+            {tooltip({ fill: "rgba(255,255,255,0.04)" })}
+            {legend}
+            <Bar dataKey="availability" name="Intro → Removal" fill={AVAIL_COLOR} radius={[6, 6, 0, 0]} />
+            <Bar dataKey="saleDuration" name="Sale → Removal" fill={SALE_COLOR} radius={[6, 6, 0, 0]} />
+            {avgLines([...availLines, ...saleLines])}
+          </BarChart>
+        </ChartCard>
+
+        <ChartCard
+          title="Availability over time"
+          subtitle="Days each capsule stayed in the store, introduction to removal."
+          lines={availLines}
+          height={320}
+        >
+          <LineChart data={data} margin={{ top: 44, right: 24, left: 0, bottom: 20 }}>
+            {grid}
+            {xAxis}
+            {yAxis}
+            {tooltip({ stroke: "rgba(255,255,255,0.25)" })}
+            {legend}
+            {avgLines(availLines)}
+            <Line
+              type="monotone"
+              dataKey="availability"
+              name="Intro → Removal"
+              stroke={AVAIL_COLOR}
+              strokeWidth={2}
+              dot={{ r: 3, fill: AVAIL_COLOR }}
+              activeDot={{ r: 5 }}
+            />
+          </LineChart>
+        </ChartCard>
+
+        <ChartCard
+          title="Sale duration over time"
+          subtitle="Days from the sale starting to the capsule being removed."
+          lines={saleLines}
+          height={320}
+        >
+          <LineChart data={data} margin={{ top: 44, right: 24, left: 0, bottom: 20 }}>
+            {grid}
+            {xAxis}
+            {yAxis}
+            {tooltip({ stroke: "rgba(255,255,255,0.25)" })}
+            {legend}
+            {avgLines(saleLines)}
+            <Line
+              type="monotone"
+              dataKey="saleDuration"
+              name="Sale → Removal"
+              stroke={SALE_COLOR}
+              strokeWidth={2}
+              dot={{ r: 3, fill: SALE_COLOR }}
+              activeDot={{ r: 5 }}
+            />
+          </LineChart>
+        </ChartCard>
       </div>
-      <footer className="mt-12 py-6 text-center text-sm text-stone-500">
+
+      <footer className="text-center text-xs text-gray-500 mt-8 pb-4 max-w-2xl mx-auto">
         made with <span className="text-red-500">♥</span> for{" "}
         <a
           href="https://discord.gg/csgomarket"
