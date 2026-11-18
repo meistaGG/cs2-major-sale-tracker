@@ -34,3 +34,15 @@ export const TOOLTIP_STYLE = {
   fontSize: 13,
   boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
 } as const;
+
+/**
+ * Sequential blue ramp, light→dark, copied from the sibling site's supply grid
+ * so heatmaps shade identically on both. Steps up to SEQ_INK_FLIP take dark ink.
+ */
+export const SEQ = [
+  "#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec",
+  "#5598e7", "#3987e5", "#2a78d6", "#256abf", "#1c5cab",
+  "#184f95", "#104281", "#0d366b",
+] as const;
+export const SEQ_INK_FLIP = 7;
+export const seqInk = (step: number) => (step <= SEQ_INK_FLIP ? "#0b0b0b" : "#ffffff");
