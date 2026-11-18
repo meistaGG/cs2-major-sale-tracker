@@ -32,12 +32,28 @@ export type CapsuleRow = {
   winner?: string | null; // e.g. "🏆 Team Vitality"
   note?: string | null; // small info tip shown next to the Major name
   noteUrl?: string | null; // optional source for the note
+  logo?: string | null; // tournament logo under /public/majors (64px webp)
+  /**
+   * How the Major's stickers were sold. Omitted = the classic capsule, which
+   * gets a discounted "sale" before removal. From Cologne 2026 on, stickers
+   * are bought individually in Valve's Major Shop, so there is no sale at all:
+   * - "volatile": price moves with demand (Cologne 2026)
+   * - "fixed":    fixed price per finish (Singapore 2026)
+   * Shop Majors keep saleDate null and are left out of every sale statistic.
+   */
+  shop?: "volatile" | "fixed";
+};
+
+const SHOP_LABEL: Record<NonNullable<CapsuleRow["shop"]>, string> = {
+  volatile: "Major Shop, demand-based prices",
+  fixed: "Major Shop, fixed prices",
 };
 
 const INITIAL_ROWS: CapsuleRow[] = [
   // === Older CS:GO Majors ===
   {
     id: "katowice-2014",
+    logo: "/majors/2014-ems-one-katowice.webp",
     major: "EMS One Katowice 2014",
     city: "Katowice",
     year: 2014,
@@ -48,6 +64,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "cologne-2014",
+    logo: "/majors/2014-esl-one-cologne.webp",
     major: "ESL One Cologne 2014",
     city: "Cologne",
     year: 2014,
@@ -58,6 +75,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "jonkoping-2014",
+    logo: "/majors/2014-dreamhack-winter.webp",
     major: "DreamHack Winter 2014",
     city: "Jonkoping",
     year: 2014,
@@ -68,6 +86,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "katowice-2015",
+    logo: "/majors/2015-esl-one-katowice.webp",
     major: "ESL One Katowice 2015",
     city: "Katowice",
     year: 2015,
@@ -78,6 +97,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "cologne-2015",
+    logo: "/majors/2015-esl-one-cologne.webp",
     major: "ESL One Cologne 2015",
     city: "Cologne",
     year: 2015,
@@ -88,6 +108,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "cluj-2015",
+    logo: "/majors/2015-dreamhack-cluj-napoca.webp",
     major: "DreamHack Cluj-Napoca 2015",
     city: "Cluj-Napoca",
     year: 2015,
@@ -98,6 +119,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "columbus-2016",
+    logo: "/majors/2016-mlg-columbus.webp",
     major: "MLG Columbus 2016",
     city: "Columbus",
     year: 2016,
@@ -108,6 +130,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "cologne-2016",
+    logo: "/majors/2016-esl-one-cologne.webp",
     major: "ESL One Cologne 2016",
     city: "Cologne",
     year: 2016,
@@ -118,6 +141,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "atlanta-2017",
+    logo: "/majors/2017-eleague-atlanta.webp",
     major: "ELEAGUE Atlanta 2017",
     city: "Atlanta",
     year: 2017,
@@ -128,6 +152,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "krakow-2017",
+    logo: "/majors/2017-pgl-krakow.webp",
     major: "PGL Krakow 2017",
     city: "Krakow",
     year: 2017,
@@ -138,6 +163,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "boston-2018",
+    logo: "/majors/2018-eleague-boston.webp",
     major: "ELEAGUE Boston 2018",
     city: "Boston",
     year: 2018,
@@ -148,6 +174,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "london-2018",
+    logo: "/majors/2018-faceit-london.webp",
     major: "FACEIT London 2018",
     city: "London",
     year: 2018,
@@ -158,6 +185,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "katowice-2019",
+    logo: "/majors/2019-iem-katowice.webp",
     major: "IEM Katowice 2019",
     city: "Katowice",
     year: 2019,
@@ -168,6 +196,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "berlin-2019",
+    logo: "/majors/2019-starladder-berlin.webp",
     major: "StarLadder Berlin 2019",
     city: "Berlin",
     year: 2019,
@@ -178,6 +207,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "RMR-2020",
+    logo: "/majors/2020-rmr.webp",
     major: "Regional Major Rankings 2020",
     city: "N/A",
     year: 2020,
@@ -189,6 +219,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   // === CS:GO (late) ===
   {
     id: "stockholm-2021",
+    logo: "/majors/2021-pgl-stockholm.webp",
     major: "PGL Stockholm 2021",
     city: "Stockholm",
     year: 2021,
@@ -199,6 +230,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "antwerp-2022",
+    logo: "/majors/2022-pgl-antwerp.webp",
     major: "PGL Antwerp 2022",
     city: "Antwerp",
     year: 2022,
@@ -209,6 +241,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "rio-2022",
+    logo: "/majors/2022-iem-rio.webp",
     major: "IEM Rio 2022",
     city: "Rio de Janeiro",
     year: 2022,
@@ -219,6 +252,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "paris-2023",
+    logo: "/majors/2023-blast-paris.webp",
     major: "BLAST.tv Paris 2023",
     city: "Paris",
     year: 2023,
@@ -230,6 +264,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   // === CS2 era ===
   {
     id: "copenhagen-2024",
+    logo: "/majors/2024-pgl-copenhagen.webp",
     major: "PGL Copenhagen 2024",
     city: "Copenhagen",
     year: 2024,
@@ -240,6 +275,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "shanghai-2024",
+    logo: "/majors/2024-pw-shanghai.webp",
     major: "Perfect World Shanghai 2024",
     city: "Shanghai",
     year: 2024,
@@ -250,6 +286,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "austin-2025",
+    logo: "/majors/2025-blast-austin.webp",
     major: "BLAST.tv Austin 2025",
     city: "Austin",
     year: 2025,
@@ -260,6 +297,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "budapest-2025",
+    logo: "/majors/2025-starladder-budapest.webp",
     major: "StarLadder Budapest 2025",
     city: "Budapest",
     year: 2025,
@@ -270,6 +308,7 @@ const INITIAL_ROWS: CapsuleRow[] = [
   },
   {
     id: "cologne-2026",
+    logo: "/majors/2026-iem-cologne.webp",
     major: "IEM Cologne 2026",
     city: "Cologne",
     year: 2026,
@@ -277,7 +316,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: null,
     removed: "2026-09-29",
     winner: "🏆 Team Falcons",
-    note: "First Major to use Valve's new volatile shop, so the usual sale/removal timings may not apply.",
+    shop: "volatile",
+    note: "First Major without capsules: stickers were bought individually at demand-based prices, so there was no sale.",
     noteUrl: "https://www.counter-strike.net/newsentry/672869045073084948",
   },
   {
@@ -289,7 +329,8 @@ const INITIAL_ROWS: CapsuleRow[] = [
     saleDate: null,
     removed: null,
     winner: null,
-    note: "No capsules: autograph stickers are sold directly at a fixed price in each finish.",
+    shop: "fixed",
+    note: "No capsules: stickers are sold directly at a fixed price in each finish, so no sale is expected.",
     noteUrl:
       "https://steamcommunity.com/games/CSGO/announcements/detail/687522235410285289",
   },
@@ -483,7 +524,8 @@ export default function CS2CapsuleTracker() {
       .map((r) => ({
         major: r.major,
         availability: availabilityDays(r) ?? 0,
-        saleDuration: diffDays(r.saleDate, r.removed) ?? 0,
+        // Shop Majors never had a sale: leave a gap rather than a zero bar.
+        saleDuration: r.shop ? null : diffDays(r.saleDate, r.removed) ?? 0,
       }));
   }, [filtered]);
 
@@ -494,7 +536,7 @@ export default function CS2CapsuleTracker() {
 
   const avgSale = useMemo(() => {
     const vals = filtered
-      .filter(isCompleted)
+      .filter((r) => isCompleted(r) && !r.shop)
       .map((r) => diffDays(r.saleDate, r.removed))
       .filter((v): v is number => v !== null);
     return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
@@ -512,15 +554,18 @@ export default function CS2CapsuleTracker() {
   const { avgAvail5, avgSale5 } = useMemo(() => {
     const parse = (d: string | null) =>
       d ? new Date(d + "T00:00:00").getTime() : 0;
-    const recent = filtered
+    const done = filtered
       .filter((r) => !!r.introduced && isCompleted(r))
-      .sort((a, b) => parse(b.introduced) - parse(a.introduced))
-      .slice(0, 5);
+      .sort((a, b) => parse(b.introduced) - parse(a.introduced));
+    // Availability counts every Major; the sale average uses the last 5 that
+    // actually had a sale, so a Shop Major doesn't shrink it to 4.
+    const recent = done.slice(0, 5);
+    const recentSales = done.filter((r) => !r.shop).slice(0, 5);
 
     const availVals = recent
       .map((r) => availabilityDays(r))
       .filter((v): v is number => v !== null);
-    const saleVals = recent
+    const saleVals = recentSales
       .map((r) => diffDays(r.saleDate, r.removed))
       .filter((v): v is number => v !== null);
 
@@ -613,13 +658,32 @@ export default function CS2CapsuleTracker() {
               <tr key={r.id} className="align-top">
                 {/* Tournament cell: name + city/year + optional tip */}
                 <td className={td}>
-                  <div className="font-semibold text-white leading-5">
-                    {r.major}
+                  <div className="flex items-start gap-3">
+                    {r.logo ? (
+                      <img
+                        src={r.logo}
+                        alt=""
+                        width={32}
+                        height={32}
+                        loading="lazy"
+                        className="h-8 w-8 shrink-0 object-contain"
+                      />
+                    ) : (
+                      <div
+                        aria-hidden="true"
+                        className="h-8 w-8 shrink-0 rounded-full border border-white/10 bg-white/5"
+                      />
+                    )}
+                    <div>
+                      <div className="font-semibold text-white leading-5">
+                        {r.major}
+                      </div>
+                      <div className="text-gray-500 text-[13px] leading-4 mt-0.5">
+                        {r.city} · {r.year}
+                      </div>
+                      {r.note && <NoteTip note={r.note} url={r.noteUrl} />}
+                    </div>
                   </div>
-                  <div className="text-gray-500 text-[13px] leading-4 mt-0.5">
-                    {r.city} · {r.year}
-                  </div>
-                  {r.note && <NoteTip note={r.note} url={r.noteUrl} />}
                 </td>
 
                 {/* Dates */}
@@ -627,7 +691,16 @@ export default function CS2CapsuleTracker() {
                   {fmt(r.introduced)}
                 </td>
                 <td className={`${td} whitespace-nowrap tabular-nums text-gray-300`}>
-                  {fmt(r.saleDate)}
+                  {r.shop ? (
+                    <span
+                      title={SHOP_LABEL[r.shop]}
+                      className="inline-flex rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] font-medium text-gray-400"
+                    >
+                      No sale
+                    </span>
+                  ) : (
+                    fmt(r.saleDate)
+                  )}
                 </td>
                 <td className={`${td} whitespace-nowrap tabular-nums text-red-400 font-medium`}>
                   {fmt(r.removed)}
@@ -640,7 +713,9 @@ export default function CS2CapsuleTracker() {
                     : "—"}
                 </td>
                 <td className={`${td} tabular-nums text-gray-300`}>
-                  {saleDur !== null
+                  {r.shop
+                    ? <span className="text-gray-500">n/a</span>
+                    : saleDur !== null
                     ? `${saleDur} days${r.removed ? "" : " (so far)"}`
                     : "—"}
                 </td>
@@ -668,7 +743,7 @@ export default function CS2CapsuleTracker() {
   }
 
   // --- Shared chart pieces ----------------------------------------------------
-  type ChartRow = { major: string; availability: number; saleDuration: number };
+  type ChartRow = { major: string; availability: number; saleDuration: number | null };
   type AvgLine = { label: string; value: number; color: string; dash: string };
 
   const AVAIL_COLOR = SERIES[0];
