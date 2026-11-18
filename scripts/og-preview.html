@@ -1,0 +1,67 @@
+<!doctype html>
+<!--
+  Source for public/preview.png, the 1200x630 link-preview card used by the
+  og:image / twitter:image tags in index.html (Discord, X, Slack, etc.).
+
+  Regenerate after adding a Major logo (Windows, from the repo root):
+    "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless --disable-gpu ^
+      --hide-scrollbars --window-size=1200,630 --screenshot="%CD%\public\preview.png" ^
+      "file:///%CD:\=/%/scripts/og-preview.html"
+  Any Chromium works the same way (chrome --headless ...).
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: radial-gradient(ellipse at 50% 0%, #262a35 0%, #1b1d24 65%);
+    color: #fff;
+    font-family: Poppins, system-ui, sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 56px 64px 0;
+  }
+  .logo { width: 96px; height: 96px; }
+  h1 { margin-top: 18px; font-size: 68px; font-weight: 700; letter-spacing: -1px; line-height: 1.1; }
+  p { margin-top: 14px; font-size: 26px; color: #9ca3af; text-align: center; }
+  .g { color: #34d399; font-weight: 500; }
+  .a { color: #fcd34d; font-weight: 500; }
+  .r { color: #f87171; font-weight: 500; }
+  .strip {
+    margin-top: 40px; display: grid; grid-template-columns: repeat(12, 64px);
+    gap: 14px 22px; padding: 22px 28px; border-radius: 20px;
+    background: #24272f; border: 1px solid rgba(255,255,255,0.06);
+  }
+  .strip img { width: 64px; height: 64px; object-fit: contain; }
+  .url { position: absolute; bottom: 22px; font-size: 20px; color: #898781; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+  <img class="logo" src="../public/logo.png" alt="" />
+  <h1>Major Capsule Tracker</h1>
+  <p>When each Major’s stickers were <span class="g">released</span>, went on
+    <span class="a">sale</span>, and were <span class="r">removed</span>.</p>
+  <div class="strip" id="strip"></div>
+  <div class="url">sale.csmarket.forum</div>
+  <script>
+    const logos = [
+      "2014-ems-one-katowice", "2014-esl-one-cologne", "2014-dreamhack-winter",
+      "2015-esl-one-katowice", "2015-esl-one-cologne", "2015-dreamhack-cluj-napoca",
+      "2016-mlg-columbus", "2016-esl-one-cologne", "2017-eleague-atlanta",
+      "2017-pgl-krakow", "2018-eleague-boston", "2018-faceit-london",
+      "2019-iem-katowice", "2019-starladder-berlin", "2020-rmr",
+      "2021-pgl-stockholm", "2022-pgl-antwerp", "2022-iem-rio",
+      "2023-blast-paris", "2024-pgl-copenhagen", "2024-pw-shanghai",
+      "2025-blast-austin", "2025-starladder-budapest", "2026-iem-cologne",
+    ];
+    const strip = document.getElementById("strip");
+    for (const l of logos) {
+      const img = document.createElement("img");
+      img.src = `../public/majors/${l}.webp`;
+      strip.appendChild(img);
+    }
+  </script>
+</body>
+</html>
